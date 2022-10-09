@@ -18,14 +18,6 @@ const UsersForm = (props: Props) => {
             placeholder : 'Select Busines or Hotel ',
             required : true
          },
-        user_type_id : {
-            type: 'db_select',
-            label : 'User Type',
-            model : 'user-type',
-            model_display_col : ['title'],
-            placeholder : 'Select user type',
-            required : true
-         },
          first_name : {
             type: 'text',
             label : 'First name ',

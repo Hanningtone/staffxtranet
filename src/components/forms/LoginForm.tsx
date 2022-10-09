@@ -11,7 +11,7 @@ const LoginForm = () => {
 
     const [message, setMessage] = useState();
     const navigate = useNavigate();
-    const [email, setEmail] = useState();
+    const [username, setUsername] = useState();
     const [password, setPassword] = useState();
     const [error, setError] = useState();
     const [loading, setLoading] = useState(false);
@@ -67,16 +67,16 @@ const LoginForm = () => {
             <div className="form-container ">
                 <form onSubmit={handleSubmit(handleSubmitUserLogin)}>
                     <div className="form-group">
-                        <label htmlFor="email" className="mb-1">Email address</label>
+                        <label htmlFor="username" className="mb-1">Username </label>
                         <input type="text" 
                             className="form-control py-2" 
-                            id="email" 
-                            placeholder="Enter email"
-                            aria-invalid={errors.email ? "true" : "false"}
-                            {...register('email', { required: true})}
+                            id="username" 
+                            placeholder="Enter username"
+                            aria-invalid={errors.username ? "true" : "false"}
+                            {...register('username', { required: true})}
                         />
-                        {errors.email && (
-                            <span role="alert" className="form-alert">Check your email</span>
+                        {errors.username && (
+                            <span role="alert" className="form-alert">Check your username</span>
                         )}
                     </div>
                     <div className="form-group mt-3">
