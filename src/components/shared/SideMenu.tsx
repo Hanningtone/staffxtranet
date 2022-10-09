@@ -16,6 +16,8 @@ const SideMenu = (props: any) => {
                 <li className={currentRoute === "bookings"?"active":""}><a href="/bookings"  className={currentRoute === "bookings"?"active":""}><i className="fa fa-calendar"></i> Bookings <span className="count">6</span></a></li>
                 <li className={currentRoute === "settings"?"active":""}><a href="/settings" className={currentRoute === "settings"?"active":""}><i className="fa fa-gears"></i> Settings</a></li>{/* users, app settings, booking window, ranking algorithm*/}
                 {/*<li><a href="/alerts"><i className="fa fa-bell-o"></i> Alerts <span className="count">2</span></a></li>*/}
+
+                <li className={currentRoute === "users"?"active":""}><a href="/users"  className={currentRoute === "users"?"active":""}><i className="fa fa-user-circle"></i> Users </a></li>
             </ul>
         </Wrapper>
     )

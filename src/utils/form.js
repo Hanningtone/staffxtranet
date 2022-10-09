@@ -1,9 +1,10 @@
 import React, { useEffect, useState,useContext } from 'react';
 import * as Yup from 'yup';
 import makeRequest from "./fetch-request";
-import { Context }  from '../../context/store';
+import { Context }  from '../context';
 import Select, { Option, ReactSelectProps } from 'react-select'
 import moment from 'moment'
+import styled from 'styled-components';
 
 import {
     Formik,
@@ -90,6 +91,38 @@ export const HiddenField = (props)  => {
     );
 };
 
+export const FileUploadField = (props)  => {
+    const { name,  label, value, onChangeFunction } = props;
+    const [field, , { setValue }] = useField(props);
+     const { setFieldValue } = useFormikContext(); 
+    const [customData, setCustomData] = useState()
+   
+    const setFileFiledData = (data) =>{
+       setFieldValue("data", data);
+    }
+
+    const callOnChangeFunction = (e) => {
+       setValue( e.target.files[0]);
+       onChangeFunction(e, setFileFiledData);
+    }
+
+    let inputProps={
+        id: name,
+        name: name,
+        className:"form-control",
+        onChange: e => callOnChangeFunction(e),
+    }
+
+    return (
+        <div className="form-group" >
+            {label && <label htmlFor={name} className="form-control-label">{label}</label>}
+            <input
+                type="file"
+                { ...inputProps }
+            />
+        </div>
+    );
+};
 export const TextAreaField = (props)  => {
     const { name, label, placeholder, value, ...rest } = props;
     return (
@@ -97,6 +130,24 @@ export const TextAreaField = (props)  => {
             {label && <label htmlFor={name} className="form-control-label">{label}</label>}
             <Field as="textarea"
                 className="form-control"
+                name={name}
+                id={name}
+                placeholder={placeholder || ""} 
+                {...rest}
+            />
+            <ErrorMessage name={name} render={msg => <div style={{ color: 'red' }} ><small>{msg}</small></div>} />
+        </div>
+    );
+};
+
+export const PasswordField = (props)  => {
+    const { name, label, placeholder, value, ...rest } = props;
+    return (
+        <div className="form-group">
+            {label && <label htmlFor={name} className="form-control-label">{label}</label>}
+            <Field
+                className="form-control"
+                type="password"
                 name={name}
                 id={name}
                 placeholder={placeholder || ""} 
@@ -125,7 +176,7 @@ export const TextField = (props)  => {
     );
 };
 
-export const CustomSelectField: React.SFC<ReactSelectProps & FieldProps> = ({ options, field, form, custmonChangeFunction,}) => {
+export const CustomSelectField= ({ options, field, form, custmonChangeFunction,}) => {
     const onChange = null; 
     const onSelectionChanged = (opt, ev) => {
         if(custmonChangeFunction){
@@ -157,7 +208,7 @@ export const SelectField = (props) => {
 };
 
 export const DatabaeSelectField = (props) => {
-    const { name, label, placeholder, options, model, model_display_col } = props;
+    const { name, label, placeholder, options, model, model_display_col } = props;  
     let _props = {
         name: name,
         id:name,
@@ -183,12 +234,14 @@ export const DatabaeSelectField = (props) => {
        const abortController = new AbortController();
        let endpoint = "/"+model+"/get?"+query_params;
         
-        makeRequest({url:endpoint, method:"get", data:null }).then(([_status, response]) => {
-            let {status, result, meta, errors} = response;
-            if(status == 200){
+        makeRequest({url:endpoint, method:"get", data:null }).then(([status, response]) => {
+            let {data, message, meta} = response;
+            console.log('Received options data ', data, status)
+            if(status === 200){
+                console.log('Status === 200 ok')
                 setNewProps(props);
                 let options = []
-                Object.entries(result).forEach( ([key, record]) =>  {
+                Object.entries(data).forEach( ([key, record]) =>  {
                     let staff_options = {};
                     staff_options["value"] = record.id;          
                     let label_text = "";
@@ -196,13 +249,13 @@ export const DatabaeSelectField = (props) => {
                         if(label_text){
                             label_text += " - ";
                         } 
-                        label_text += record.[col] ;
+                        label_text += record[col] ;
                     });
                     staff_options["label"] = label_text;         
                     options = [...options, staff_options]
                 });
                 _props.options = options;
-                setNewProps(_props);
+                setNewProps({...props, ...{options:options}});
             }
             
         });
@@ -211,8 +264,9 @@ export const DatabaeSelectField = (props) => {
             abortController.abort();
         };
     }, []);
-   
+    console.log("Reached useEffect in DB Select Field return statement");
     return <SelectField  {...new_props} />
+   
 };
 
 export const RadioGroupField = (props) => {
@@ -232,10 +286,22 @@ export const RadioGroupField = (props) => {
     );
 };
 export const CheckBoxField = (props) => {
-    const { name, label, placeholder, ...rest } = props;
+    const { name, label, placeholder, value, checked, ...rest } = props;
     return (
         <div className="custom-control custom-checkbox">
-          <Field type="checkbox" className="custom-control-input" id={name} />
+          <Field 
+              name={name}
+              render={({field, form}) => {
+                  return (
+                      <input
+                         type={"checkbox"}
+                         id={name}
+                         className={"custom-control-input"}
+                         checked={field.value}
+                         {...field} />
+                  );
+              }}
+           />
         { label && <label className="custom-control-label" htmlFor={name}>{label}</label> }
         <ErrorMessage name={name} render={msg => <div style={{ color: 'red' }} ><small>{msg}</small></div>} />
         </div>
@@ -254,6 +320,7 @@ export const initForm = (formSchema) => {
     let formData = {};
     let validationSchema = {};
     for(var key of Object.keys(formSchema)){
+        console.log("Foem schema value", key, formSchema);
         formData[key] = formSchema[key].value ||  "";
         if(formSchema[key].type === "text"){
             validationSchema[key] = Yup.string();
@@ -266,6 +333,8 @@ export const initForm = (formSchema) => {
         } else if(formSchema[key].type === "db_select"){
             validationSchema[key] = Yup.string(); 
         } else if(formSchema[key].type === "radio"){
+            validationSchema[key] = Yup.string(); 
+        } else if(formSchema[key].type === "password"){
             validationSchema[key] = Yup.string(); 
         }
         if(formSchema[key].required){
@@ -286,6 +355,10 @@ export const getFormElement = (elementName, elementSchema) => {
         label: elementSchema.label,
         value: elementSchema.value ||"",
         placeholder:elementSchema.placeholder || ""
+    }
+
+    if(elementSchema?.onChangeFunction){
+       props.onChangeFunction = elementSchema.onChangeFunction;
     }
 
     //optional props
@@ -323,6 +396,7 @@ export const getFormElement = (elementName, elementSchema) => {
         return <RadioGroupField  {...props} />
     }
     if (elementSchema.type === "checkbox") {
+        props.checked = elementSchema.checked || false;
         return <CheckBoxField  {...props} />
     }
     if (elementSchema.type === "textarea") {
@@ -341,18 +415,24 @@ export const getFormElement = (elementName, elementSchema) => {
     if (elementSchema.type === "db_select") {
         return <DatabaeSelectField  {...props} />
     }
+    if (elementSchema.type === "password") {
+        return <PasswordField  {...props} />
+    }
+    if (elementSchema.type === "fileupload") {
+        return <FileUploadField  {...props} />
+    }
 };
 
 export const LoadForm = (formSchema, submitLabel, endpoint) => {
    
    const {formData, validationSchema} = initForm(formSchema);
-   const { response, makeRequest } =  useAxios();
+   
    const [ state, dispatch ] =  useContext(Context);
 
    const onSubmit = (values, { setSubmitting,  resetForm, setStatus, setErrors}) => {
-       makeRequest({url:endpoint, method:"post", data:values}).then((response) => {
-           let {status, result, errors} = response;
-           if(errors){
+       makeRequest({url:endpoint, method:"post", data:values}).then(([status, result]) => {
+           console.log("Result is ", result, "status is ", status);
+           if(status > 299){
                if(status < 500) { 
                    const field_errors = {};
                    Object.entries(result?.data).forEach( ([key, value]) =>  {
@@ -361,17 +441,17 @@ export const LoadForm = (formSchema, submitLabel, endpoint) => {
                    setErrors(field_errors);
                    dispatch({type:"SET", key:state?.context, payload:{"status":false, "message":result.message}});
                } else {
-                   dispatch({type:"SET", key:"server_error", payload:{"status":false, "message":"Internal server error"}});
+                   dispatch({type:"SET", key:state?.context, payload:{"status":false, "message":"Internal server error"}});
                }
            } else {
-               dispatch({type:"SET", key:state?.context, payload:{"status":true}});
-               dispatch({type:"SET", key:"formsubmitsuccess", payload:result});
-               dispatch({type:"DEL", key:"server_error"});
+               console.log("Dispatching state", state?.context,{"status":true, message:result.message, data:result} )
+               dispatch({type:"SET", key:state?.context, payload:{"status":true, message:result.message, data:result}});
                dispatch({type:"SET", key:"page", payload:state?.page === 0 ? 1: 0 });
            } 
            setSubmitting(false);
        });
    }
+   
 
    return ( 
        <Form

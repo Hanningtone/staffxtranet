@@ -9,10 +9,17 @@ import { AdminLayout,
  } from "../components";
  import CategoryService from "../services/CategoryService";
  import SettingsMenu from "../components/settings/SettingsMenu";
+ import { useEffect, useCallback, useState, useContext  } from 'react';
+ import makeRequest from "../utils/fetch-request";
+ import { Context } from "../context";
 
-import React, { useContext, useEffect, useState } from "react";
+
 
 const MarketsPage = (user: any) => {
+    const [markets, setMarkets] = useState([]);
+    const [error, setError] = useState();
+    const [message, setMessage] = useState();
+    const [state, dispatch ] =  useContext(Context);
 
     const [showModal, setShowModal] = useState(false);
     const [catData, setCatData] = useState();
@@ -22,16 +29,17 @@ const MarketsPage = (user: any) => {
         setShowModal(show);
     }
 
-    const {isLoading: isLoading, refetch: getCategories } = useQuery<any[], Error>(
-        "query-categories",
-        async () => {
-          return await CategoryService.getCategoriesData(token)
-    },{
-    enabled: false,
-    onSuccess: (res: any) => { console.log(res); setCatData(res)}})
+    // const {isLoading: isLoading, refetch: getCategories } = useQuery<any[], Error>(
+    //     "query-categories",
+    //     async () => {
+    //       return await CategoryService.getCategoriesData(token)
+    // },{
+    // enabled: false,
+    // onSuccess: (res: any) => { console.log(res); setCatData(res)}})
 
     useEffect(()=>{
-        getCategories();
+
+   
     }, [catData])
 
     const data = {
@@ -52,6 +60,36 @@ const MarketsPage = (user: any) => {
           }
         ]
     };
+
+  useEffect(() => {
+    dispatch({type:"SET", key:'context', payload:'eventspage'});
+}, [])
+
+    const fetchMarkets = useCallback(() => {
+        let _url = "http://127.0.0.1:8000/api/1.7.2/markets/get";
+    
+        makeRequest({ url: _url, method: "get", data: null }).then(
+          ([status, result]) => {
+            if (status !== 200) {
+              setError(result?.message || "Error, could not fetch records");
+            } else {
+              setMarkets(result?.data || []);
+              console.log("Tumepata data", data);
+
+       
+            }
+          }
+        );
+        
+      }, [state?.eventspage],);
+
+      useEffect(() => { 
+        fetchMarkets();
+        console.log("Tumefika Hapa")
+      }, [fetchMarkets]);
+
+
+
 
     return(
         <AdminLayout showSideMenu={true} user={user}>
@@ -82,18 +120,18 @@ const MarketsPage = (user: any) => {
                             </thead>
                             <tbody>
 
-                                {isLoading?
-                                <TableLoaders count={6}/>
+                                
+                                <TableLoaders count={3}/>
                                 :
                                 <tr>
-                                    <td>Naivasha</td>
+                                    
+                                    <td></td>
                                     <td>Kenya</td>
                                     <td>Nairobi</td>
                                     <td><span className="default">0</span></td>
                                     <td><span className="default">0</span></td>
                                     <td><span className="default">0</span></td>
                                 </tr>
-                                }
 
                             </tbody>
                         </table>

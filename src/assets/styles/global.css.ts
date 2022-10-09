@@ -244,7 +244,7 @@ export default createGlobalStyle`
         vertical-align: top;
     }
     table tbody tr: hover td{
-       background-color: #f5f5f5;
+       background-color: #fdfdfd;
        cursor: pointer;
     }
     table tbody tr td{
@@ -252,7 +252,7 @@ export default createGlobalStyle`
         border:1px solid #f1f1f1;
         vertical-align: top;
         font-size: 13px;
-        background-color: #fff;
+        background-color: #fff !important;
     }
     table tbody tr td span.default{
         background-color: #f1f1f1; 

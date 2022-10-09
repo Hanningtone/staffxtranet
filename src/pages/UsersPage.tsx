@@ -1,13 +1,36 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import makeRequest from "../utils/fetch-request";
 import DataTable from "../utils/table";
 import { AdminLayout, SubHeader } from "../components";
-import SettingsMenu from "../components/settings/SettingsMenu";
+import { UncoverModal }from "../components";
+import UsersForm from "../components/forms/UsersForm";
+import { Context } from '../context';
+import CustomModalPane from "../utils/_modal";
+
+
 
 const UsersList = (props: any) => {
   const [userList, setUserList] = useState({});
   const [error, setError] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [message, setMessage] = useState("");
+  const [state, dispach] = useContext(Context);
+  const [classname, setClassName] = useState("");
+
+
+  let data = [ { name: 'Haningtone',
+                  place : 'Kakamega',
+                  Height : 'Too short',
+                  Money : 'Nothing'},
+                  { name: 'Haningtone',
+                  place : 'Kakamega',
+                  Height : 'Too short',
+                  Money : 'Nothing'}]
+
+  const showModalForm = (show: boolean) =>{
+    setShowModal(show);
+}
 
   const fetchUsers = useCallback(() => {
     let _url = "/users/get";
@@ -35,16 +58,14 @@ const UsersList = (props: any) => {
           pageTitle="Users"
           pageSubTitle="0 Users on Uncover"
           btnTxt="Create new user"
-          onPress={() => void null}
+          onPress = {()=>showModalForm(!showModal)}
           showCreateButton={true}
         />
         <div className="container-fluid">
           <div className="row pe-1">
-              <div className="col-lg-2">
-                <SettingsMenu />
-              </div>
               <div className="col-lg-6">
-                  <table>
+
+                  {/* <table>
                       <thead>
                         <tr>
                               <td>Name</td>
@@ -70,7 +91,9 @@ const UsersList = (props: any) => {
                             <td></td>
                           </tr>
                         </tbody>
-                  </table>
+                  </table> */}
+
+                  <DataTable data = {userList }/>
               </div>
               <div className="col-lg-4">
                         <Sidebar>
@@ -110,6 +133,17 @@ const UsersList = (props: any) => {
                     </div>
           </div>
         </div>
+
+        <CustomModalPane
+                show={showModal}
+                title=" Create User"
+                target="create-user"
+                hideThisModal={() => setShowModal(false)}
+              >
+                {message && <div className={classname}>{message}</div>}
+                <UsersForm setShowModal={showModal} />
+              </CustomModalPane>
+
       </Home>
     </AdminLayout>
   );
