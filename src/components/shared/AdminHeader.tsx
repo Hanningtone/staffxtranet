@@ -1,8 +1,29 @@
+import React, { useState, useEffect  } from 'react';
 import styled from "styled-components";
 import logo from "../../assets/images/logo.jpeg";
 import Avatar from 'react-avatar';
+import { getFromLocalStorage, removeItem } from "../../utils/local-storage";
+import { useNavigate } from "react-router-dom";
+
 
 const AdminHeader = (props: any) => {
+
+    const [user, setUser] = useState<any>();
+    const nav = useNavigate();
+
+    const Logout = () => {
+        removeItem("user");
+        nav("/")
+    }
+
+    useEffect(() => {
+        setUser(getFromLocalStorage("user"));   
+
+        if(user){
+            console.log("Loading new usr", user);
+        }
+    }, [])
+
     return(
         <HeaderWrapper>
              <div className="container-fluid">
@@ -32,15 +53,15 @@ const AdminHeader = (props: any) => {
                             <div className="user-profile">
                                 <Avatar color={'#188754'} round={true} name="Evans Wanyama" size="35" />
                                 <div className="nameuser">
-                                    <span className="user-name">Evans Wanyama</span>
-                                    <span className="company">Uncover Africa</span>
+                                    <span className="user-name">{user?.first_name}&nbsp; {user?.last_name}</span>
+                                    <span className="company">{user?.business_access.map((value:any) => value.business_name  )}</span>
                                 </div> 
                                 <div className="userinfo">
                                     <p><a href="#">Change password</a></p>
                                     <p><a href="#">Account Details</a></p>
                                     <p><a href="#">Help </a></p>
                                     <hr/>
-                                    <p className="loguser">logout</p>
+                                    <p className="loguser" onClick= {Logout }>logout</p>
                                 </div>
                             </div> 
                         </div>

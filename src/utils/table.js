@@ -104,7 +104,19 @@ const Tr = (props) => {
             { 
                 Object.entries(props?.row_data||[]).map(([key, value]) => {
                     if(!endsWith(key, "_id") && !(key === 'id')){
-                        return <Td value={value} key={`id-${key}`} colspan={props?.colspan || ""} heading={props?.heading|| false} model={model} recordId={props.recordId} actions = {actions} />
+
+
+                        if(Array.isArray(value) ){
+                            return null;
+                        } else {
+                            return <Td value={value} 
+                                key={`id-${key}`} 
+                                colspan={props?.colspan || ""} 
+                                heading={props?.heading|| false} 
+                                model={model} 
+                                recordId={props.recordId} 
+                                actions = {actions} />
+                        }
                     }
                 })
             }
@@ -186,8 +198,7 @@ const DataTable = (props) => {
 
         if(props?.data && props.data instanceof Array){ 
             let raw_headers = Object.keys(props.data[0]||{}).map((key) => {
-
-                if(!endsWith(key, "_id") && !(key === 'id')){
+                if(!endsWith(key, "_id") && !(key === 'id') && !Array.isArray(props.data[0][key])){
                     let strs = key.split('_').map((wd) => {
                         return (wd.charAt(0).toUpperCase() + wd.slice(1));
                     });

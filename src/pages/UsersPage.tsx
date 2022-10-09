@@ -65,34 +65,6 @@ const UsersList = (props: any) => {
           <div className="row pe-1">
               <div className="col-lg-6">
 
-                  {/* <table>
-                      <thead>
-                        <tr>
-                              <td>Name</td>
-                              <td>Email</td>
-                              <td>Phone Number</td>
-                              <td>User Type</td>
-                              <td>Property</td>
-                        </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td>Wanyama</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                          </tr>
-                          <tr>
-                            <td>Wanyama</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                          </tr>
-                        </tbody>
-                  </table> */}
-
                   <DataTable data = {userList }/>
               </div>
               <div className="col-lg-4">

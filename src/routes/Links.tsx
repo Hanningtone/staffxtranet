@@ -18,8 +18,9 @@ import {
 } from "../pages";
 import ProtectedRoute from './ProtectedRoutes';
 import { Context } from "../context";
+import { setLocalStorage, getFromLocalStorage, removeItem } from '../utils/local-storage';
 
-import { setLocalStorage, getFromLocalStorage } from '../utils/local-storage';
+
 
 const Links= () => {
 
@@ -47,6 +48,7 @@ const Links= () => {
         <Route path="/customers" element={<CustomersPage user={user}/>} />
         <Route path='/users' element={<UsersPage user={user}/>} />
         <Route path="/business-settings" element={<BusinessSettings user={user}/>} />
+        <Route path="*" element={<LoginPage />} />
       </Routes>
     </Router>
   )
