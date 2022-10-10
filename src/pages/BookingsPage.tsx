@@ -14,13 +14,14 @@ const BookingsPage= (user: any) => {
     const [error, setError] = useState(null);
 
     const fetchBookings = useCallback(() => {
-       let _url = "/data/bookings";
+       let _url = "/bookings/get";
 
        makeRequest({url:_url, method:"get", data:null}).then(([status, result]) => {
            if(status !== 200){
                setError(result?.message || "Error, could not fetch records");
            } else {
-               setBookings(result?.result || []);
+                console.log(" Here we have our data", result?.data);
+               setBookings(result?.data || []);
                setStats(result?.stats || []);
                setSelectedBooking(result?.result[0])
            }
@@ -48,9 +49,13 @@ const BookingsPage= (user: any) => {
                         <div className="booking-details">
                             <TotalTabs { ...stats }/>
                             <div className="booking-wrapper">
-                                <BookingDetails/>
-                                <BookingDetails1/>
-                                <BookingDetails1/>
+                               
+                            {bookings?.map((value:any) => {
+                                       return <BookingDetails data= {value}/> 
+                                       
+                                    })
+                                    
+                                    }
                             </div>
                         </div>
                     </div>

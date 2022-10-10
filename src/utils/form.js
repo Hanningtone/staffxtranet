@@ -264,7 +264,6 @@ export const DatabaeSelectField = (props) => {
             abortController.abort();
         };
     }, []);
-    console.log("Reached useEffect in DB Select Field return statement");
     return <SelectField  {...new_props} />
    
 };
@@ -320,7 +319,7 @@ export const initForm = (formSchema) => {
     let formData = {};
     let validationSchema = {};
     for(var key of Object.keys(formSchema)){
-        console.log("Foem schema value", key, formSchema);
+
         formData[key] = formSchema[key].value ||  "";
         if(formSchema[key].type === "text"){
             validationSchema[key] = Yup.string();

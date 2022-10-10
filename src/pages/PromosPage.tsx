@@ -8,31 +8,67 @@ import { AdminLayout,
  } from "../components";
  import CategoryService from "../services/CategoryService";
 
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import {Context}  from '../context';
+import makeRequest from "../utils/fetch-request";
+import DataTable from "../utils/table";
+import PromtionsForm from "../components/forms/PromotionsForm";
+import CustomModalPane from "../utils/_modal";
 
 const PromosPage = (user: any) => {
 
     const [showModal, setShowModal] = useState(false);
     const [catData, setCatData] = useState();
     const [token, setToken] = useState();
+    const [promotions, setPromotions] = useState([]);
+    const [state, dispatch ] =  useContext(Context);
+    const [error, setError] = useState(null);
+    const [message, setMessage] = useState();
+    const [classname, setClassname] = useState('success');
+
+
+
+    useEffect(() => {
+        if(state?.context){
+          let status = state[state.context]?.status;
+          let message = state[state.context]?.message;
+          let data = state[state.context]?.data || {};
+    
+          if(status === true){
+            setClassname('alert alert-success');     
+          } else {
+            setClassname('alert alert-danger');
+          }
+          setMessage(message);
+        }
+    
+      }, [state?.promotionspage])
+
+  
+   const fetchPromotions = useCallback( () => {
+    let endpoint = '/promotions/get';
+
+    makeRequest( { url :endpoint, method:"get" , data:null}).then( ([status, result]) => {
+        if(status !== 200) {
+            setError(result?.message || "Error, could not fetch records");
+        }
+        else {
+            console.log("We got data here!", result?.data) 
+            setPromotions(result?.data || []);
+                    
+
+        }
+     } );
+   }, [state?.promotionspage])
+
+
+    useEffect(()=>{
+        fetchPromotions();
+    }, [fetchPromotions])
 
     const showModalForm = (show: boolean) =>{
         setShowModal(show);
     }
-
-    const {isLoading: isLoading, refetch: getCategories } = useQuery<any[], Error>(
-        "query-hotels",
-        async () => {
-          return await CategoryService.getCategoriesData(token)
-    },{
-    enabled: false,
-    onSuccess: (res: any) => { console.log(res); setCatData(res)}})
-
-    useEffect(()=>{
-        getCategories();
-    }, [catData])
-
     return(
         <AdminLayout showSideMenu={true}  user={user}>
         <Home>
@@ -44,102 +80,63 @@ const PromosPage = (user: any) => {
              showCreateButton = {true}
             />
             <div className="container-fluid">
-                <div className="row">
-                    <div className="col-lg-8">
-                    <div className="row px-3">
-                        <div className="col-lg-12 bg-white">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <td>Promo Name</td>
-                                        <td>Promo Type</td>
-                                        <td>Amount Discounted</td>
-                                        <td>Percentage Discounted</td>
-                                        <td>Start date</td>
-                                        <td>End Date</td>
-                                        <td>#</td>
-                                    </tr>
-                                </thead>
+          <div className="row pe-1">
+              <div className="col-lg-6">
 
-                                {isLoading?
-                                    <TableLoaders count={7}/>
-                                :
-                                    <tbody>
-                                        <tr>
-                                            <td>The social house</td>
-                                            <td>Referal Code</td>
-                                            <td><span className="default">500</span></td>
-                                            <td><span className="default">5%</span></td>
-                                            <td>May 10, 2022 10am</td>
-                                            <td>May 10, 2022 10pm</td>
-                                            <td><span className="default">1</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td>CODE8</td>
-                                            <td>Promo code</td>
-                                            <td><span className="default">500</span></td>
-                                            <td><span className="default">5%</span></td>
-                                            <td>May 10, 2022 10am</td>
-                                            <td>May 10, 2022 10pm</td>
-                                            <td><span className="default">1</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Georate</td>
-                                            <td>Promotions</td>
-                                            <td><span className="default">500</span></td>
-                                            <td><span className="default">5%</span></td>
-                                            <td>May 10, 2022 10am</td>
-                                            <td>May 10, 2022 10pm</td>
-                                            <td><span className="default">1</span></td>
-                                        </tr>
-                                    </tbody>
-                                }
-                            </table>
-                        </div>
-                        <p className="text-end mt-3 pagination-text">Showing page 1 of 1</p>
-                    </div>
-                    </div>
-                    <div className="col-lg-4">
+                  <DataTable data = {promotions }/>
+              </div>
+              <div className="col-lg-4">
                         <Sidebar>
                                 <div className="field-wrapper">
                                     <div>
-                                            <span>Nairobi</span>
+                                            <span className="h4">Your Profile</span>
                                     </div>
                                     <div className="btnwrapper">
-                                            <button>Edit</button>
-                                            <button>Delete</button>
+                                            <button>Change Details</button>
                                     </div>
                                 </div>
                                 <hr className="firstchild" />
                                 <div className="field-wrapper">
-                                    <span>Market Name:</span>
-                                    <span>Nairobi</span>
+                                    <span className="h5">Name: </span>
+                                    <span>{user?.first_name} &nbsp; {user?.last_name}</span>
                                 </div>
                                 <hr  />
                                 <div className="field-wrapper">
-                                    <span>Country:</span>
-                                    <span>Kenya</span>
+                                    <span className="h5">Email : </span>
+                                    <span> { user?.email } </span>
                                 </div>
                                 <hr />
                                 <div className="field-wrapper">
-                                    <span>City:</span>
-                                    <span >Nairobi</span>
+                                    <span className="h5">Phone Number : </span>
+                                    <span > { user?.phone_number } </span>
                                 </div>
                                
                             </Sidebar>
                             <Sidebar>
                                <div className="field-wrapper">
                                     <div>
-                                        <span><strong>Promo Code Activities</strong></span>
+                                        <span><strong>My Businesses </strong></span>
+
                                     </div>
                                 </div>
+
+                                <hr className="firstchild" />
+
+                                
                             </Sidebar>
                     </div>
-                </div>
-            </div>
-            <UncoverModal show={showModal}>
-                <HotelForm setShowModal={setShowModal}/>
-            </UncoverModal>
+          </div>
+        </div>
+
+        <CustomModalPane
+                show={showModal}
+                title=" Create Promotion"
+                target="create-user"
+                hideThisModal={() => setShowModal(false)}
+              >
+                {message && <div className={classname}>{message}</div>}
+                <PromtionsForm setShowModal={showModal} />
+              </CustomModalPane>
         </Home>
         </AdminLayout>
     )

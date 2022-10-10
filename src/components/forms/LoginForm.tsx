@@ -6,6 +6,8 @@ import styled from "styled-components";
 import { setLocalStorage }  from '../../utils/local-storage';
 import {Context}  from '../../context';
 import makeRequest from "../../utils/fetch-request";
+import CustomModalPane from "../../utils/_modal";
+import ResetPasswordForm from "./ResetPasswordForm";
 
 const LoginForm = () => {
 
@@ -17,6 +19,7 @@ const LoginForm = () => {
     const [loading, setLoading] = useState(false);
     const [state, dispatch] = useContext(Context);
     const [classname, setClassname] = useState('');
+    const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
         dispatch({type:"SET", key:'context', payload:'eventspage'});
@@ -37,6 +40,10 @@ const LoginForm = () => {
       }
   
     }, [state?.eventspage])
+    
+    const showModalForm = () => {
+
+    }
 
     const handleSubmitUserLogin = (values:any) => {                                            
         let endpoint = '/auth/login';
@@ -100,11 +107,21 @@ const LoginForm = () => {
                         {!loading ?
                             <button type="submit" className="btn btn-primary">   Login  </button>
                             :
-                            <button type="button" className="submit btn-primary" disabled>   Please wait...  </button>
+                            <button type="button" className="btn btn-primary" disabled>   Please wait...  </button>
                         }
                     </div>
+                    <p onClick={ () => setShowModal(true) }> Forgot Passsword? </p>
                 </form>
             </div>
+              <CustomModalPane
+                show={showModal}
+                title=" Reset Password"
+                target="reset=password"
+                hideThisModal={() => setShowModal(false)}
+              >
+                {message && <div className={classname}>{message}</div>}
+                <ResetPasswordForm setShowModal={showModal} />
+              </CustomModalPane>
         </Card>
     )
 }
@@ -137,6 +154,7 @@ const Card = styled.div`
         width: 100%;
         border-radius: 5px;
     }
+    
     .bigger{
         font-size:15px;
         margin-bottom:7px;

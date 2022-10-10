@@ -4,6 +4,7 @@ import buildinghotel from "../../assets/images/buildinghotel.jpg";
 
 
 const BookingDetails1 = (props: any) => {
+    const { data } = props;
     console.log("This is the props in details page", props);
     return(
         <Wrapper>
@@ -16,7 +17,7 @@ const BookingDetails1 = (props: any) => {
                     <p>Nairobi, Kenya</p>
                     <span className="book-type">INSTANT BOOKING: PAID</span>
                     <h4 className="customercash">
-                        KSH 45,000.00
+                        KSH 45,020.00
                     </h4>
                 </div>
                 <div className="checkdetails">
@@ -24,12 +25,12 @@ const BookingDetails1 = (props: any) => {
                             <div className="checkin">
                                 <h6>check-in</h6>
                                 <h4 className="time"> 4.00pm</h4>
-                                <h6 className="date">August 5, 2022</h6>
+                                <h6 className="date"></h6>
                             </div>
                             <div className="checkout">
                                 <h6>check-out</h6>
-                                <h4 className="time">4.00pm</h4>
-                                <h6 className="date">August 5, 2022</h6>
+                                <h4 className="time"> data.check_in_date</h4>
+                                <h6 className="date"></h6>
                             </div> 
                      </div> 
                 </div>    

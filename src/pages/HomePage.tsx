@@ -1,8 +1,10 @@
 import styled from "styled-components";
 import { AdminLayout, LineChart, BookingSummary} from "../components";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useCallback } from "react";
 import {Context}  from '../context';
 import finalPropsSelectorFactory from "react-redux/es/connect/selectorFactory";
+import makeRequest from "../utils/fetch-request";
+
 
 const HomePage = (user: any) => {
 
@@ -24,6 +26,24 @@ const HomePage = (user: any) => {
           }
         ]
     };
+    const [ bookings, setBookings] = useState([]);
+    
+    const fetchBookings = useCallback(() => {
+        let endpoint = "/bookings/get"
+        makeRequest({url:endpoint, method:"get",data:null}).then(([status, result]) => {
+            if(status == 200){
+                setBookings(result?.data);
+                console.log("We got some Data", result?.data);
+            }
+        })
+    
+    }, []);
+
+    useEffect(() =>{
+
+        fetchBookings();
+   
+   }, [fetchBookings])
 
     return(
         <AdminLayout showSideMenu={true} user={user}>
@@ -79,7 +99,7 @@ const HomePage = (user: any) => {
                            </div> 
                             <div className="stat-top-wrapper">
                                 <p className="stat-title">Total Bookings</p>
-                                <p className="stat-total">300</p>
+                                <p className="stat-total">{ bookings.length }</p>
                             </div>
                             <div className="stat-bottom-wrapper">
                                <p><span className="text-danger fw-bold">-5% </span>decrease since last month</p>

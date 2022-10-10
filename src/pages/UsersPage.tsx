@@ -7,6 +7,8 @@ import { UncoverModal }from "../components";
 import UsersForm from "../components/forms/UsersForm";
 import { Context } from '../context';
 import CustomModalPane from "../utils/_modal";
+import { getFromLocalStorage, removeItem } from '../utils/local-storage';
+import { forEachChild } from "typescript";
 
 
 
@@ -17,16 +19,18 @@ const UsersList = (props: any) => {
   const [message, setMessage] = useState("");
   const [state, dispach] = useContext(Context);
   const [classname, setClassName] = useState("");
+  const [user, setUser] = useState<any>();
+ //  const [businesses, setBusiness] = useState([]);
 
+  // get current user from local storage
 
-  let data = [ { name: 'Haningtone',
-                  place : 'Kakamega',
-                  Height : 'Too short',
-                  Money : 'Nothing'},
-                  { name: 'Haningtone',
-                  place : 'Kakamega',
-                  Height : 'Too short',
-                  Money : 'Nothing'}]
+  useEffect(() => {
+    setUser(getFromLocalStorage("user"));   
+
+    if(user){
+        console.log(" And our user is", user);
+    }
+}, [])
 
   const showModalForm = (show: boolean) =>{
     setShowModal(show);
@@ -55,7 +59,7 @@ const UsersList = (props: any) => {
     <AdminLayout showSideMenu={true} user={props.user}>
       <Home>
         <SubHeader
-          pageTitle="Users"
+          pageTitle="All Users"
           pageSubTitle="0 Users on Uncover"
           btnTxt="Create new user"
           onPress = {()=>showModalForm(!showModal)}
@@ -71,36 +75,51 @@ const UsersList = (props: any) => {
                         <Sidebar>
                                 <div className="field-wrapper">
                                     <div>
-                                            <span>Nairobi</span>
+                                            <span className="h4">Your Profile</span>
                                     </div>
                                     <div className="btnwrapper">
-                                            <button>Edit</button>
-                                            <button>Delete</button>
+                                            <button>Change Details</button>
                                     </div>
                                 </div>
                                 <hr className="firstchild" />
                                 <div className="field-wrapper">
-                                    <span>Market Name:</span>
-                                    <span>Nairobi</span>
+                                    <span className="h5">Name: </span>
+                                    <span>{user?.first_name} &nbsp; {user?.last_name}</span>
                                 </div>
                                 <hr  />
                                 <div className="field-wrapper">
-                                    <span>Country:</span>
-                                    <span>Kenya</span>
+                                    <span className="h5">Email : </span>
+                                    <span> { user?.email } </span>
                                 </div>
                                 <hr />
                                 <div className="field-wrapper">
-                                    <span>City:</span>
-                                    <span >Nairobi</span>
+                                    <span className="h5">Phone Number : </span>
+                                    <span > { user?.phone_number } </span>
                                 </div>
                                
                             </Sidebar>
                             <Sidebar>
                                <div className="field-wrapper">
                                     <div>
-                                        <span><strong>User Activities</strong></span>
+                                        <span><strong>My Businesses </strong></span>
+
                                     </div>
                                 </div>
+
+                                <hr className="firstchild" />
+                                <div className="">
+                                  <ul className="items-list">
+                                    
+                                    {user?.business_access.map((value:any) => {
+                                       return <li style={{ width:"100%" }}> {value.business_name} </li>
+                                    })
+                                    
+                                    }
+                                  </ul>
+                                    
+                                </div>
+
+                                
                             </Sidebar>
                     </div>
           </div>

@@ -273,7 +273,7 @@ export default createGlobalStyle`
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-    }
+    }   
     .modal-bar-wrapper{
         padding: 10px 0px 0px;
         margin: 20px 0px 0px 0px;
@@ -283,5 +283,24 @@ export default createGlobalStyle`
         color: #f00;
         font-size: 10px;
         margin-top: 5px;
+    }
+    .items-list {
+        list-style: none;
+        padding-left: 0px;
+        font-size : 0.9rem;
+        
+    }
+    .items-list li{
+        border-bottom : 1px solid rgba(0,0,0,0.1);
+        padding-bottom : 5px;
+        margin-bottom : 5px;        
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .checkwrapper .time {
+        font-size: 15px;
     }
      `;
