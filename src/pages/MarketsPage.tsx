@@ -16,10 +16,11 @@ import { AdminLayout,
 
 
 const MarketsPage = (user: any) => {
-    const [markets, setMarkets] = useState([]);
+    const [markets, setMarkets] = useState<any>([]);
     const [error, setError] = useState();
     const [message, setMessage] = useState();
     const [state, dispatch ] =  useContext(Context);
+    const [selectedMkt, setSelectedMkt] = useState<any>();
 
     const [showModal, setShowModal] = useState(false);
     const [catData, setCatData] = useState();
@@ -29,18 +30,6 @@ const MarketsPage = (user: any) => {
         setShowModal(show);
     }
 
-    // const {isLoading: isLoading, refetch: getCategories } = useQuery<any[], Error>(
-    //     "query-categories",
-    //     async () => {
-    //       return await CategoryService.getCategoriesData(token)
-    // },{
-    // enabled: false,
-    // onSuccess: (res: any) => { console.log(res); setCatData(res)}})
-
-    useEffect(()=>{
-
-   
-    }, [catData])
 
     const data = {
         labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
@@ -61,12 +50,12 @@ const MarketsPage = (user: any) => {
         ]
     };
 
-  useEffect(() => {
-    dispatch({type:"SET", key:'context', payload:'eventspage'});
-}, [])
+    const editSelectedMarket = () => {
+        showModalForm(!showModal);
+    }
 
-    const fetchMarkets = useCallback(() => {
-        let _url = "http://127.0.0.1:8000/api/1.7.2/markets/get";
+    const fetchMarkets = () => {
+        let _url = "/markets/get";
     
         makeRequest({ url: _url, method: "get", data: null }).then(
           ([status, result]) => {
@@ -74,22 +63,21 @@ const MarketsPage = (user: any) => {
               setError(result?.message || "Error, could not fetch records");
             } else {
               setMarkets(result?.data || []);
-              console.log("Tumepata data", data);
-
-       
             }
           }
         );
-        
-      }, [state?.eventspage],);
+      };
 
-      useEffect(() => { 
+    useEffect(() => {
+        if(markets) {
+            setSelectedMkt(markets[0]);
+        }
+    }, [markets])
+
+    useEffect(() => {
+        dispatch({type:"SET", key:'context', payload:'marketspage'});
         fetchMarkets();
-        console.log("Tumefika Hapa")
-      }, [fetchMarkets]);
-
-
-
+    }, [])
 
     return(
         <AdminLayout showSideMenu={true} user={user}>
@@ -110,9 +98,9 @@ const MarketsPage = (user: any) => {
                         <table>
                             <thead>
                                 <tr>
-                                    <td>Market Name</td>
                                     <td>Country</td>
                                     <td>City</td>
+                                    <td>Market Name</td>
                                     <td>Total Hotels</td>
                                     <td>Rooms</td>
                                     <td>Bookings</td>
@@ -120,51 +108,49 @@ const MarketsPage = (user: any) => {
                             </thead>
                             <tbody>
 
-                                
-                                <TableLoaders count={3}/>
-                                :
-                                <tr>
-                                    
-                                    <td></td>
-                                    <td>Kenya</td>
-                                    <td>Nairobi</td>
-                                    <td><span className="default">0</span></td>
-                                    <td><span className="default">0</span></td>
-                                    <td><span className="default">0</span></td>
-                                </tr>
-
+                               { markets && markets?.map((market:any) => {  
+                                    return (
+                                        <tr onClick={() => setSelectedMkt(market)}>
+                                            
+                                            <td>{market.country}</td>
+                                            <td>{market.city}</td>
+                                            <td>{market.market_name}</td>
+                                            <td><span className="default">{market?.hotels || 0}</span></td>
+                                            <td><span className="default">{market?.rooms || 0}</span></td>
+                                            <td><span className="default">{market?.bookings || 0}</span></td>
+                                        </tr>
+                                    )
+                                })
+                            }
                             </tbody>
                         </table>
                     </div>
 
                     <div className="col-lg-4">
-                        <Sidebar>
+                        {selectedMkt && (
+                            <Sidebar>
                                 <div className="field-wrapper">
                                     <div>
-                                            <span>Nairobi</span>
+                                            <span>{selectedMkt?.market_name}</span>
                                     </div>
                                     <div className="btnwrapper">
-                                            <button>Edit</button>
-                                            <button>Delete</button>
+                                            <button onClick={editSelectedMarket}>Edit</button>
+                                            <button >Delete</button>
                                     </div>
                                 </div>
                                 <hr className="firstchild" />
                                 <div className="field-wrapper">
-                                    <span>Market Name:</span>
-                                    <span>Nairobi</span>
+                                    <span>County:</span>
+                                    <span>{selectedMkt?.country}</span>
                                 </div>
                                 <hr  />
                                 <div className="field-wrapper">
-                                    <span>Country:</span>
-                                    <span>Kenya</span>
-                                </div>
-                                <hr />
-                                <div className="field-wrapper">
                                     <span>City:</span>
-                                    <span >Nairobi</span>
+                                    <span>{selectedMkt?.city}</span>
                                 </div>
                                
-                            </Sidebar>
+                            </Sidebar>)
+                        }
                             <Sidebar>
                                <div className="field-wrapper">
                                     <div>
