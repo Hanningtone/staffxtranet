@@ -8,7 +8,7 @@ import tablestyles from './tablestyles.css';
 
 
 const Th = (props) => {
-   return <th scope="col"  style={{ "background-color" : "#931a1dbc", "color" : "#fff" }}>{props?.name}</th>
+   return <th scope="col"  style={{ "background-color" : "#006C67", "color" : "#fff" }}>{props?.name}</th>
 }
 
 const TableHeader = (props) => {
