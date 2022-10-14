@@ -10,6 +10,7 @@ import HotelsMenu from "../components/hotels/HotelMenu";
 
 import React, { useContext, useEffect, useState } from "react";
 import {Context}  from '../context';
+import { useLocation} from "react-router-dom";
 
 const AnyReactComponent = ({ text }: any) => 
     <div className='map-marker'>
@@ -20,6 +21,9 @@ const AnyReactComponent = ({ text }: any) =>
     </div>;
 
 const CategoriesPage = (user: any) => {
+    const {state} = useLocation();
+    const [currentHotel, setCurrentHotel] = useState(state);
+
 
     const defaultProps = {
         center: {
@@ -121,15 +125,15 @@ const CategoriesPage = (user: any) => {
                                    <hr></hr>
                                    <div className="field-wrapper">
                                         <span className="left"> Name:</span>
-                                        <span>Hilton</span>
+                                        <span>{currentHotel.name}</span>
                                     </div>
                                     <div className="field-wrapper">
                                         <span className="left">Category:</span>
-                                        <span>Nairobi</span>
+                                        <span>{currentHotel.category}</span>
                                     </div>
                                     <div className="field-wrapper">
                                         <span className="left">Market:</span>
-                                        <span>Nairobi</span>
+                                        <span>{currentHotel.market.market_name}</span>
                                     </div>
                                     <div className="field-wrapper">
                                         <span className="left">Property Type:</span>
@@ -299,14 +303,18 @@ const CategoriesPage = (user: any) => {
                                     </div>
                                     </div>
                                    <hr></hr>
-                                   <div className="profile-wrapper">
-                                     <div className="item-photo"></div>
-                                     <div className="item-datails">
-                                        <h6>John Doe </h6>
-                                        <p>0725920576</p>
-                                        <p> Manager</p>
-                                     </div>
-                                   </div>
+                                   {currentHotel.admin_users?.map( (adminUser : any) => {
+                                    return ( 
+                                    <div className="profile-wrapper">
+                                        <div className="item-photo"></div>
+                                            <div className="item-datails">
+                                                <h6>{ adminUser.user} </h6>
+                                                <p>0725920576</p>
+                                                <p> Manager</p>
+                                            </div>
+                                        </div> )
+                                   })}
+                                   
                                 </Profile>
                                 <Profile>
                                     <div className="profile-header">

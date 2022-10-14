@@ -54,7 +54,11 @@ const MarketsPage = (user: any) => {
         showModalForm(!showModal);
     }
 
+<<<<<<< HEAD
+    const fetchMarkets = useCallback(() => {
+=======
     const fetchMarkets = () => {
+>>>>>>> 9de18322d8a0933a15aa59ec342e624fa86136e7
         let _url = "/markets/get";
     
         makeRequest({ url: _url, method: "get", data: null }).then(

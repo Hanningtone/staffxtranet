@@ -1,13 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import styled from "styled-components";
 import { useForm } from "react-hook-form";
 import { LoadForm } from '../../utils/form';
+import { Context } from '../../context';
 
 interface Props {
     setShowModal: any
+    selectedRecord : any
+    submitTitle : any
 }
 
-const UsersForm = (props: Props) => {
+const UsersForm = (props : Props) => {
+    const [state, dispach] = useContext(Context);
+    const {selectedRecord, submitTitle } = props;
 
     const schema = {
         business_id : {
@@ -65,12 +70,36 @@ const UsersForm = (props: Props) => {
 
 
     }
+      
+    const [usersFormSchema, setUsersFormSchema] = useState(schema);
     const [label, setLabel] = useState("Create User");  
     const [endpoint, setEndpoint] = useState("/auth/register");
+
+    useEffect(() => {
+        
+        if(selectedRecord){
+           
+            setLabel('Update Record');
+            setEndpoint('/users/update/' + selectedRecord.id)
+           
+            let editSchema : any = Object.assign({}, schema);
+            Object.entries(selectedRecord).map(([key, value]) => {
+
+                if(editSchema[key]){
+                    editSchema[key].value = value;
+                } else {
+
+                }
+            })
+            setUsersFormSchema(editSchema);
+        } else {
+            setLabel(submitTitle);
+        }
+    },[selectedRecord])
  
     return(
         <FormWrapper>
-            { LoadForm(schema, label, endpoint) }
+            { LoadForm(usersFormSchema, label, endpoint) }
         </FormWrapper>
     )
 }
