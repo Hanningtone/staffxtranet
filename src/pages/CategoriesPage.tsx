@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState  } from 'react';
+import { useEffect, useCallback, useState, useContext  } from 'react';
 
 import styled from "styled-components";
 import { useQuery} from 'react-query';
@@ -14,29 +14,50 @@ import { AdminLayout,
 
 import makeRequest from "../utils/fetch-request";
 import DataTable from "../utils/table"
+import { Context } from "../context";
 
 
 const CategoriesPage = (user: any) => {
 
     const [showModal, setShowModal] = useState(false);
-    const [catData, setCatData] = useState();
+    const [categories, setCategories] = useState<any>();
+    const [selectedCategory, setSelectedCategory] = useState<any>();
+    const [state, dispatch ] =  useContext(Context);
     const [token, setToken] = useState();
+    const [error, setError] = useState();
 
     const showModalForm = (show: boolean) =>{
         setShowModal(show);
     }
 
-    const {isLoading: isLoading, refetch: getCategories } = useQuery<any[], Error>(
-        "query-categories",
-        async () => {
-          return await CategoryService.getCategoriesData(token)
-    },{
-    enabled: false,
-    onSuccess: (res: any) => { console.log(res); setCatData(res)}})
+    const editSelectedCategory = () => {
+        showModalForm(!showModal);
+    }
+    const getCategories = () => {
+        let _url = "/categories/get";
+    
+        makeRequest({ url: _url, method: "get", data: null }).then(
+          ([status, result]) => {
+            if (status !== 200) {
+              setError(result?.message || "Error, could not fetch records");
+            } else {
+              setCategories(result?.data || []);
+            }
+          }
+        );
+      };
 
-    useEffect(()=>{
+    useEffect(() => {
+        if(categories) {
+            setSelectedCategory(categories[0]);
+        }
+    }, [categories])
+
+    useEffect(() => {
+        dispatch({type:"SET", key:'context', payload:'categoriespage'});
         getCategories();
-    }, [catData])
+    }, [])
+
 
     const data = {
         labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
@@ -83,49 +104,53 @@ const CategoriesPage = (user: any) => {
                                 </tr>
                             </thead>
                             
-                            {isLoading?
-                            <TableLoaders count={4}/>
-                            :
-                            <tbody>
-                            <tr>
-                                <td>Lux</td>
-                                <td><span className="default">0</span></td>
-                                <td><span className="category">#suyy</span></td>
-                                <td>Description</td>
-                            </tr>
-                            </tbody>
+                            {categories && (
+                                <tbody>
+                                    {categories.map((category:any) => {
+                                     return  <tr onClick ={ () => setSelectedCategory(category)}>
+                                        <td>{category.name}</td>
+                                        <td><span className="default">{category?.hotels|| 0}</span></td>
+                                        <td><span className="category" style={{background:category?.category_color|| "#fff" }}>{category?.category_color}</span></td>
+                                        <td>{category.description}</td>
+                                    </tr>
+                                    })
+                                    }
+                                </tbody>
+                            )
                             }
 
                         </table>
                     </div>
 
                     <div className="col-lg-4">
+                        { selectedCategory && 
                         <Sidebar>
                             <div className="field-wrapper">
                                 <div>
-                                    <span>Nairobi</span>
+                                    <span>{selectedCategory.name}</span>
                                 </div>
                                 <div className="btnwrapper">
-                                    <button>Edit</button>
+                                    <button onClick={editSelectedCategory}>Edit</button>
                                     <button>Delete</button>
                                 </div>
                             </div>
                             <hr className="firstchild" />
                             <div className="field-wrapper">
                                 <span>Category Name:</span>
-                                <span>Nairobi</span>
+                                <span>{selectedCategory.name}</span>
                             </div>
                             <hr  />
                             <div className="field-wrapper">
                                 <span>Color:</span>
-                                <span>Kenya</span>
+                                <span style={{background: selectedCategory.category_color}}>{selectedCategory.category_color}</span>
                             </div>
                             <hr />
                             <div className="field-wrapper">
                                 <span>Description:</span>
-                                <span >Nairobi</span>
+                                <span >{selectedCategory.description}</span>
                             </div>
                         </Sidebar>
+                        }
                         <Sidebar>
                             <div className="field-wrapper">
                                     <div>

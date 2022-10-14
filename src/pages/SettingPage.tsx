@@ -1,30 +1,31 @@
 import { useEffect, useCallback, useState } from "react";
-import styled from "styled-components";import {
+import styled from "styled-components";
+
+import {
   SortableList,
   SortableItem,
   SortableItemProps,
   ItemRenderProps,
 } from '@thaddeusjiang/react-sortable-list';
-import 'react-date-range/dist/styles.css';
-import 'react-date-range/dist/theme/default.css';
 import { AdminLayout, SubHeader, UsersList } from "../components";
 import SettingsMenu from "../components/settings/SettingsMenu";
 import makeRequest from "../utils/fetch-request";
 import SwitchSelector from "react-switch-selector";
-import { DateRangePicker } from 'react-date-range';
+import { useForm } from "react-hook-form";//@ts-ignore
 
 const SettingsPage = (props: any) => {
-  const [settings, setSettings] = useState([]);
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm();
+  const [settings, setSettings] = useState<any>([]);
+  const [markets, setMarkets] = useState<any>([]);
+  const [selectedMkt, setSelectedMkt] = useState<any>();
+  const [hotels, setHotels] = useState<SortableItemProps[]>([]);
+  const [bookingWindow, setBookingWindow] = useState<any>();
+  const [bookingWindowResponse, setBookingWindowResponse] = useState<any>();
   const [error, setError] = useState(null);
-
-  const [items, setItems] = useState<SortableItemProps[]>([
-    { id: '1', name: 'The Social House', location: "Nairobi, kenya" },
-    { id: '2', name: 'Eden Hotel', location: "Nairobi, kenya"  },
-    { id: '3', name: 'Safaripark Hotel', location: "Nairobi, kenya"  },
-  ]);
+  const [settingChangeResponse, setSettingChangeResponse] = useState<any>(null);
 
   const fetchSettings = useCallback(() => {
-    let _url = "/settings/get";
+    let _url = "/settings/get?append=markets";
 
     makeRequest({ url: _url, method: "get", data: null }).then(
       ([status, result]) => {
@@ -32,33 +33,168 @@ const SettingsPage = (props: any) => {
           setError(result?.message || "Error, could not fetch records");
         } else {
           setSettings(result?.data || []);
+          setMarkets(result?.extra?.markets|| []);
         }
       }
     );
   }, []);
 
+  const fetchBookingWindow = () => {
+    let _url = "/booking-windows/get?limit=1"
+
+    makeRequest({ url: _url, method: "get", data: null }).then(
+      ([status, result]) => {
+        if (status !== 200) {
+          setError(result?.message || "Error, could not fetch businsess");
+        } else {
+          setBookingWindow(result?.data[0] || []);
+        }
+      }
+    );
+  };
+  const fetchMarketHotels = () => {
+    let _url = "/business/get?market-id="+ selectedMkt?.id || 1;
+
+    makeRequest({ url: _url, method: "get", data: null }).then(
+      ([status, result]) => {
+        if (status !== 200) {
+          setError(result?.message || "Error, could not fetch businsess");
+        } else {
+          setHotels(result?.data || []);
+        }
+      }
+    );
+  };
+
+  const onSubmit = (values: any) => {
+        let endpoint = '/booking-windows/create';
+        makeRequest({url:endpoint, method:"post", data:values}).then(([status, result]) => {
+            console.log("Result is ", result, "status is ", status);
+            if(status > 299){
+                if(status < 500) { 
+                    const field_errors:any = {};
+                    Object.entries(result?.data).forEach( ([key, value]) =>  {
+                    });
+                    setBookingWindowResponse({status:false, message:result.message});
+                } else {
+                    setBookingWindowResponse({status:false, message:"Failed to create market due to error"});
+                }
+            } else {
+                 setBookingWindowResponse({status:true, message:result.message, data:result});
+            } 
+        });
+    }
+
+  const hotelOrderChanged = (items:any) => {
+       if (!items) {
+           return false;
+       }
+       let total = items.length; 
+       let updated_items:any = items.map((item:any) => {
+               let new_item:any = { id:item.id, ranking:total};
+               total--;
+               return new_item;
+       });
+       console.log("This is my new order", updated_items)
+       let endpoint = '/business/update/0';
+       makeRequest({url:endpoint, method:"post", data:updated_items}).then(([status, result]) => {
+            console.log("Result is ", result, "status is ", status);
+        });
+  }
+
+  useEffect(() => {
+     if(bookingWindow){
+         setValue("run_from_date", bookingWindow.run_from_date);
+         setValue("run_to_date", bookingWindow.run_to_date);
+         setValue("booking_length", bookingWindow.booking_length);
+     }
+  }, [bookingWindow]);
+
+  useEffect(() => {
+     if(selectedMkt){
+         fetchMarketHotels();
+     }
+  }, [selectedMkt]);
+
+  useEffect(() => {
+     if(markets){
+         setSelectedMkt(markets[0]);
+     }
+  }, [markets]);
+
   useEffect(() => {
     fetchSettings();
+    fetchBookingWindow();
   }, [fetchSettings]);
-  const options = [
+
+  useEffect(() => {
+      hotelOrderChanged(hotels);
+  }, [hotels])
+
+  const getMarketOptions = (market:any) => {
+  
+      return [
+        {
+            label: <span>Yes</span>,
+            value: {allow:1, market:market},
+            selectedBackgroundColor: "#0097e6",
+        },
+        {
+            label: "No",
+            value: {allow:0, market:market},
+            selectedBackgroundColor: "#fbc531"
+        }
+     ];
+ }
+
+ const getSettingOptions = (setting:any) => {
+  return  [
     {
         label: <span>Yes</span>,
-        value: {
-             yes: true
-        },
+        value: {enable: 1, setting:setting},
         selectedBackgroundColor: "#0097e6",
     },
     {
         label: "No",
-        value: "true",
+        value: {enable: 0, setting:setting},
         selectedBackgroundColor: "#fbc531"
     }
  ];
+ }
 
-  const onChange = (newValue : any) => {
-    console.log(newValue);
-};
-const initialSelectedIndex = options.findIndex(({value}) => value === "bar");
+ const changeSettingsStatus = (record : any) => {
+        let endpoint = '/settings/update/'+record.setting.id;
+        let values: any= { enabled: record.enable };
+        makeRequest({url:endpoint, method:"post", data:values}).then(([status, result]) => {
+            console.log("Result is ", result, "status is ", status);
+            if(status > 299){
+                if(status < 500) { 
+                    setSettingChangeResponse({status:false, message:result.message});
+                } else {
+                    setSettingChangeResponse({status:false, message:"Failed to update setting due to error"});
+                }
+            } else {
+                 setSettingChangeResponse({status:true, message:result.message, data:result});
+            } 
+        });
+ };
+
+ const changeMarketStatus = (record:any) => {
+        console.log("This is the record", record)
+        let endpoint = '/markets/update/'+record.market.id;
+        let values: any= { allow_custom_listing: record.allow };
+        makeRequest({url:endpoint, method:"post", data:values}).then(([status, result]) => {
+            console.log("Result is ", result, "status is ", status);
+        });
+ };
+const initialSelectedIndex = (market:any) => {
+    return getMarketOptions(market).findIndex(({value}) => value.allow === market.allow_custom_listing);
+}
+
+const initialSettingIndex = (setting:any) => {
+ return getSettingOptions(setting).findIndex(({value}) => value.enable === setting.enabled);
+}
+
 const selectionRange = {
   startDate: new Date(),
   endDate: new Date(),
@@ -72,7 +208,7 @@ const selectionRange = {
           pageSubTitle="Uncover settings"
           btnTxt="Save Details"
           onPress={() => void null}
-          showCreateButton={true}
+          showCreateButton={false}
         />
         <div className="container-fluid">
           <div className="row pe-4">
@@ -84,40 +220,61 @@ const selectionRange = {
                  <div className="col-lg-6">
                  <div className="bg-white">
                   <h6>Top deals</h6>
+
+                    { settingChangeResponse?.status === true && (<div className = {
+                     `alert alert-${settingChangeResponse?.status === true ? 'success': 'danger'}`} role="alert">
+                      {settingChangeResponse?.message} 
+                    </div>) }
                     <div className="deal-wrapper">
-                      <p className="deal-container">Show top deals bar</p>
-                          <div className="profile-selector-wrapper" style={{width: 100}}>
-                          <SwitchSelector
-                            onChange={onChange}
-                            options={options}
-                            initialSelectedIndex={initialSelectedIndex}
-                            backgroundColor={"#353b48"}
-                            fontColor={"#f5f6fa"}
-                          />
-                          </div>
+
+                        { settings && settings?.map((setting:any) => {
+                           return ( <>
+                              <p className="deal-container">{setting.name}</p>
+                              <div className="profile-selector-wrapper" style={{width: 100}}>
+                                  <SwitchSelector
+                                    onChange={changeSettingsStatus}
+                                    options={getSettingOptions(setting)}
+                                    initialSelectedIndex={initialSettingIndex(setting)}
+                                    backgroundColor={"#353b48"}
+                                    fontColor={"#f5f6fa"}
+                                  />
+                             </div>
+                             </>)
+                         })
+                         }
                     </div>
                  </div>
                  </div>
                  <div className="col-lg-6">
                   <div className="bg-white">
-                    <h6>Booking Window</h6>
-                      <div className="deal-wrapper">
-                        <select className="form-select">
-                          <option value="weekend">Weekend</option>
-                          <option value="day7" selected>7 Days</option>
-                          <option value="day14">14 Days</option>
-                          <option value="1month">1 Month</option>
-                          <option value="2month">2 Months</option>
-                          <option value="3month">3 Months</option>
-                        </select>
-                    </div>
-                    <div className="deal-wrapper duration-container">
-                      <input type="date" className="form-control me-2" placeholder="From date"></input>
-                      <input type="date" className="form-control" placeholder="To date"></input>
-                      {/*<DateRangePicker
-                       ranges={[selectionRange]}
-                      />*/}
-                    </div>
+                    
+                    <div>
+                    { bookingWindowResponse?.status === true && (<div className = {
+                         `alert alert-${bookingWindowResponse?.status === true ? 'success': 'danger'}`} role="alert">
+                          {bookingWindowResponse?.message} 
+                        </div>) }
+                        <form onSubmit={handleSubmit(onSubmit)}>
+                        <h6>Booking Window</h6>
+                          <div className="deal-wrapper">
+                            <select className="form-select" 
+                                {...register('booking_length', { required: true, value:bookingWindow?.booking_length})} >
+                              <option value="weekend">Weekend</option>
+                              <option value="7 day" selected>7 Days</option>
+                              <option value="14 day">14 Days</option>
+                              <option value="1 month">1 Month</option>
+                              <option value="2 month">2 Months</option>
+                              <option value="3 month">3 Months</option>
+                            </select>
+                        </div>
+                        <div className="deal-wrapper duration-container">
+                          <input type="date"  {...register('run_from_date')} className="form-control me-2" placeholder="From date"></input>
+                          <input type="date" {...register('run_to_date')} className="form-control" placeholder="To date"></input>
+                        </div>
+                        <div className="flex-row-btwn modal-bar-wrapper">
+                            <button className="btn btn-outline-primary ms-2" type="submit">Save</button>
+                        </div>
+                    </form>
+                 </div>
                   </div>
                   </div>
                   </div>
@@ -128,10 +285,14 @@ const selectionRange = {
                         <div className="col-lg-3">
                             <div className="markets-wrapper">
                                  <ul>
-                                    <li className="active"><span>Nairobi</span><i className="fa fa-angle-right"></i></li>
-                                    <li><span>Mombasa</span><i className="fa fa-angle-right"></i></li>
-                                    <li><span>Naivasha</span><i className="fa fa-angle-right"></i></li>
-                                    <li><span>Nanyuki</span><i className="fa fa-angle-right"></i></li>
+                                   {markets && markets?.map((market:any) => { 
+                                       return (
+                                           <li onClick={() => setSelectedMkt(market)} 
+                                               className={`${selectedMkt?.market_name == market.market_name ? 'active' :'' }`}>
+                                                   <span>{market.market_name}</span><i className="fa fa-angle-right"></i>
+                                           </li>)
+                                       }) 
+                                   }
                                  </ul>
                             </div>
                         </div>
@@ -139,20 +300,21 @@ const selectionRange = {
                          
                           <div className="hotels-wrapper">
                             <div className="hotel-custom-listing">
-                                <h6>Custom listing for Nairobi</h6>
+                                <h6>Custom listing for {selectedMkt?.market_name}</h6>
                                 <div className="profile-selector-wrapper" style={{width: 100}}>
-                                <SwitchSelector
-                                  onChange={onChange}
-                                  options={options}
-                                  initialSelectedIndex={initialSelectedIndex}
+                                { selectedMkt && <SwitchSelector
+                                  onChange={changeMarketStatus}
+                                  options={getMarketOptions(selectedMkt)}
+                                  initialSelectedIndex={initialSelectedIndex(selectedMkt)}
                                   backgroundColor={"#353b48"}
                                   fontColor={"#f5f6fa"}
                                 />
+                                }
                                 </div>
                             </div>
                             <SortableList
-                                items={items}
-                                setItems={setItems}
+                                items={hotels}
+                                setItems={setHotels}
                                 itemRender={({ item }: ItemRenderProps) => (
                                   <div className="hotel">
                                     <div className="number">{item.id}</div>
@@ -161,7 +323,7 @@ const selectionRange = {
                                     </div>
                                     <div className="hotel-details">
                                        <h6>{item.name}</h6>
-                                       <span>{item.location}</span>
+                                       <span>{item.description}</span>
                                     </div>
                                   </div>
                                 )}
