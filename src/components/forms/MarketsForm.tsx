@@ -15,22 +15,14 @@ interface Props {
 const CategoriesForm = (props: Props) => {
     const [ state, dispatch ] =  useContext(Context);
     const { register, handleSubmit, formState: { errors } } = useForm();
+    const [responseMessage, setResponseMessages] = useState<any>();
 
     const handleSelect = (country: any) => {
     }
 
     const onSubmit = (values: any) => {
-        values = [
-            {
-              "name": "Kakamega",
-              "country": "Kenya",
-              "city": "Kakamega",
-            }
-          ]
-        let endpoint = 'http://127.0.0.1:8002/api/1.7.2/markets/create';
+        let endpoint = '/markets/create';
         
-
-
         makeRequest({url:endpoint, method:"post", data:values}).then(([status, result]) => {
             console.log("Result is ", result, "status is ", status);
             if(status > 299){
@@ -38,13 +30,12 @@ const CategoriesForm = (props: Props) => {
                     const field_errors:any = {};
                     Object.entries(result?.data).forEach( ([key, value]) =>  {
                     });
-                    dispatch({type:"SET", key:state?.context, payload:{"status":false, "message":result.message}});
+                    setResponseMessages({status:false, message:result.message});
                 } else {
-                    dispatch({type:"SET", key:state?.context, payload:{"status":false, "message":"Internal server error"}});
+                    setResponseMessages({status:false, message:"Failed to create market due to error"});
                 }
             } else {
-                console.log("Dispatching state", state?.context,{"status":true, message:result.message, data:result} )
-                dispatch({type:"SET", key:state?.context, payload:{"status":true, message:result.message, data:result}});
+                 setResponseMessages({status:true, message:result.message, data:result});
                 dispatch({type:"SET", key:"page", payload:state?.page === 0 ? 1: 0 });
             } 
         });
@@ -52,19 +43,22 @@ const CategoriesForm = (props: Props) => {
 
     return(
         <FormWrapper>
+        { responseMessage?.status === true && (<div className = {
+             `alert alert-${responseMessage?.status === true ? 'success': 'danger'}`} role="alert">
+              {responseMessage?.message} 
+            </div>) }
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="form-group my-3">
                     <label htmlFor="hotel-name">Market Title</label>
                     <input type="text" className="form-control" id="marketName" aria-invalid={errors.categoryName ? "true" : "false"}
-                    {...register('marketName', { required: true})}/>
-                     {errors.marketName && (
+                    {...register('market_name', { required: true})}/>
+                     {errors.market_name && (
                         <span role="alert" className="form-alert">Enter market name</span>
                      )}
                 </div>
                 <div className="form-group my-3">
                     <label htmlFor="hotel-name">Country</label>
-                    <input type="text" className="form-control" value="Kenya" disabled id="country"  
-                    {...register('country')}/>
+                    <input  type="text" className="form-control"  disabled id="country" {...register('country', {value:"Kenya"})}/>
                      {errors.country && (
                         <span role="alert" className="form-alert">Enter country</span>
                      )}
