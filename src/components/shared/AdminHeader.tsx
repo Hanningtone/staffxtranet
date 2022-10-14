@@ -17,10 +17,8 @@ const AdminHeader = (props: any) => {
     }
 
     useEffect(() => {
-        setUser(getFromLocalStorage("user"));   
-
+        setUser(getFromLocalStorage("user"));
         if(user){
-            console.log("Loading new usr", user);
         }
     }, [])
 

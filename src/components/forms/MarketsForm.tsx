@@ -27,7 +27,7 @@ const CategoriesForm = (props: Props) => {
               "city": "Kakamega",
             }
           ]
-        let endpoint = 'http://127.0.0.1:8002/api/1.7.2/markets/create';
+        let endpoint = '/markets/create';
         
 
 

@@ -36,7 +36,7 @@ const makeRequest = async ({ url, method, data = null}) => {
           if(data) {
               request['body'] = JSON.stringify(data)
           }
-          console.log("making request to ", url, BASE_URL)
+          console.log("making request to ", url )
           const response = await fetch(url, request);
           let result = await response.json();
           let status = response?.status;

@@ -9,6 +9,7 @@ import { Context } from '../context';
 import CustomModalPane from "../utils/_modal";
 import { getFromLocalStorage, removeItem } from '../utils/local-storage';
 import { forEachChild } from "typescript";
+import { FaUserEdit } from 'react-icons/fa'
 
 
 
@@ -20,21 +21,53 @@ const UsersList = (props: any) => {
   const [state, dispach] = useContext(Context);
   const [classname, setClassName] = useState("");
   const [user, setUser] = useState<any>();
- //  const [businesses, setBusiness] = useState([]);
+  //  const [businesses, setBusiness] = useState([]);
+  const [selectedrecord, setSelectedRecord] = useState(user);
+  const[submitTitle, setSubmitTitle] = useState("Create an User");
+  const[modalTitle, setModalTitle] = useState("Create User");
 
-  // get current user from local storage
+  const model = 'users';
 
+// get current user from local storage
+useEffect(() => {
+  dispach({type:"SET", key:'context', payload:'userspage'});
+}, [])
+
+// Handle Edit
+
+const onEditFunction = (event : any, model : any, user: any) => {
+  dispach({type:"SET", key:"updaterecord", payload:{id:user.id, model:model}});
+  setShowModal(true);
+};
+
+  
   useEffect(() => {
     setUser(getFromLocalStorage("user"));   
 
     if(user){
         console.log(" And our user is", user);
     }
-}, [])
+}, []);
 
-  const showModalForm = (show: boolean) =>{
-    setShowModal(show);
-}
+
+// fetch users from API
+
+useEffect(() => {
+  if(state?.context){
+    let status = state[state.context].status;
+    let message = state[state.context].message;
+    let data = state[state.context]?.data || {};
+
+    if(status === true){
+      setClassName('alert alert-success');     
+    } else {
+      setClassName('alert alert-danger');
+    }
+    setMessage(message);
+  }
+
+}, [state?.userspage])
+
 
   const fetchUsers = useCallback(() => {
     let _url = "/users/get";
@@ -51,10 +84,40 @@ const UsersList = (props: any) => {
     );
   }, []);
 
+ useEffect(() => {
+    
+  if(user){
+    let id = user.id;
+    let model = 'users';
+      console.log(" Current User ID ", user.id);
+      let data_url = '/'+model+'/get?id=' + id;
+      makeRequest({url:data_url, method:'get', data:null}).then(([status, response])=> {
+          if(status !== 200){
+              dispach({type:'SET', key:'server_error', payload:response.message})
+
+          } else {
+              setSelectedRecord(response.data.shift());
+          }
+          setSubmitTitle('Update your details');
+          setShowModal(true);
+      })
+  }
+},[])
+
   useEffect(() => {
     fetchUsers();
     console.log(userList);
   }, [fetchUsers]);
+
+
+  // show modal ..
+  const showModalForm = (show: boolean, title='Create Event', submitTitle='Create Record') =>{
+    setModalTitle(title);
+    setSubmitTitle(submitTitle);
+    setShowModal(show);
+    
+}
+// 
   return (
     <AdminLayout showSideMenu={true} user={props.user}>
       <Home>
@@ -75,10 +138,13 @@ const UsersList = (props: any) => {
                         <Sidebar>
                                 <div className="field-wrapper">
                                     <div>
-                                            <span className="h4">Your Profile</span>
+                                            <span className="h1">Your Profile</span>
                                     </div>
                                     <div className="btnwrapper">
-                                            <button>Change Details</button>
+                                            <FaUserEdit />
+                                            <button onClick={ (event) => onEditFunction(event, model, user.id) }>Edit Details  </button>
+                                            
+                                            
                                     </div>
                                 </div>
                                 <hr className="firstchild" />
@@ -95,6 +161,16 @@ const UsersList = (props: any) => {
                                 <div className="field-wrapper">
                                     <span className="h5">Phone Number : </span>
                                     <span > { user?.phone_number } </span>
+                                </div>
+                                <hr />
+                                <div className="field-wrapper">
+                                    <span className="h5">Password </span>
+                                    <span className="change-password">
+                                    <span className="aste"> **** </span> &nbsp; &nbsp;
+                                    <span>
+                                    <button className="change__password__btn"> Change Password </button>
+                                    </span>
+                                    </span>
                                 </div>
                                
                             </Sidebar>
@@ -132,7 +208,10 @@ const UsersList = (props: any) => {
                 hideThisModal={() => setShowModal(false)}
               >
                 {message && <div className={classname}>{message}</div>}
-                <UsersForm setShowModal={showModal} />
+                <UsersForm setShowModal={showModal}
+                selectedRecord={selectedrecord}
+                submitTitle = { submitTitle }
+                />
               </CustomModalPane>
 
       </Home>
@@ -188,6 +267,17 @@ border:1px solid #f1f1f1;
 background-color:#fff;
 padding:10px;
 margin-bottom:20px;
+.change__password__btn {
+  margin-left : 10px;
+  border:solid 1px #dedede;
+  outline:none;
+  margin-left:20px;
+  padding:3px 7px;
+}
+.aste {
+  letter-spacing: 0.5em;
+  font-weight : bold;
+}
 .field-wrapper{
     display:flex;
     justify-content:space-between;

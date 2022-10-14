@@ -66,7 +66,7 @@ const MarketsPage = (user: any) => {
 }, [])
 
     const fetchMarkets = useCallback(() => {
-        let _url = "http://127.0.0.1:8000/api/1.7.2/markets/get";
+        let _url = "/markets/get";
     
         makeRequest({ url: _url, method: "get", data: null }).then(
           ([status, result]) => {
