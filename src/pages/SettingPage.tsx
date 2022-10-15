@@ -24,8 +24,8 @@ const SettingsPage = (props: any) => {
   const [error, setError] = useState(null);
   const [settingChangeResponse, setSettingChangeResponse] = useState<any>(null);
 
-  const fetchSettings = useCallback(() => {
-    let _url = "/settings/get?append=markets";
+  const fetchSettings = () => {
+    let _url = "/settings/get?append=market";
 
     makeRequest({ url: _url, method: "get", data: null }).then(
       ([status, result]) => {
@@ -33,11 +33,11 @@ const SettingsPage = (props: any) => {
           setError(result?.message || "Error, could not fetch records");
         } else {
           setSettings(result?.data || []);
-          setMarkets(result?.extra?.markets|| []);
+          setMarkets(result?.extra?.market|| []);
         }
       }
     );
-  }, []);
+  };
 
   const fetchBookingWindow = () => {
     let _url = "/booking-windows/get?limit=1"
@@ -125,7 +125,7 @@ const SettingsPage = (props: any) => {
   useEffect(() => {
     fetchSettings();
     fetchBookingWindow();
-  }, [fetchSettings]);
+  }, []);
 
   useEffect(() => {
       hotelOrderChanged(hotels);
@@ -181,7 +181,7 @@ const SettingsPage = (props: any) => {
 
  const changeMarketStatus = (record:any) => {
         console.log("This is the record", record)
-        let endpoint = '/markets/update/'+record.market.id;
+        let endpoint = '/market/update/'+record.market.id;
         let values: any= { allow_custom_listing: record.allow };
         makeRequest({url:endpoint, method:"post", data:values}).then(([status, result]) => {
             console.log("Result is ", result, "status is ", status);
