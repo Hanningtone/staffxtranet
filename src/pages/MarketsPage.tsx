@@ -54,7 +54,6 @@ const MarketsPage = (user: any) => {
         showModalForm(!showModal);
     }
 
-
     const fetchMarkets = () => {
         let _url = "/markets/get";
     
