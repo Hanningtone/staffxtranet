@@ -55,7 +55,7 @@ const MarketsPage = (user: any) => {
     }
 
     const fetchMarkets = () => {
-        let _url = "/markets/get";
+        let _url = "/market/get";
     
         makeRequest({ url: _url, method: "get", data: null }).then(
           ([status, result]) => {
