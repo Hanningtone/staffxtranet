@@ -14,6 +14,7 @@ import React, { useContext, useEffect, useState, useCallback } from "react";
 import {Context}  from '../context';
 import makeRequest from "../utils/fetch-request";
 import { useNavigate } from 'react-router-dom';
+import { GrView } from 'react-icons/gr';
 
 const HotelsPage = (user: any) => {
 
@@ -211,7 +212,7 @@ const hotelOnclickHandler = (props : any) => {
                                     <td>Branches</td>
                                     <td>Markets</td>
                                     <td>Manager(s)</td>
-                                    <td>&nbsp;</td>
+                                    <td> View Detail &nbsp;</td>
                                 </tr>
                             </thead>
 
@@ -239,7 +240,7 @@ const hotelOnclickHandler = (props : any) => {
                                         <td><span className="default"> {eachHotel.branch || " No Hotel Branches"} </span></td>
                                         <td><span className="default"> {eachHotel.market.market_name} </span></td>
                                         <td><Avatar color={'orange'} round={true} name="Wim Mostmans" size="25" /> {eachHotel.admin_users.length || " No Admin"}</td>
-                                        <td> <button onClick={()=>navigateToConfirmed(eachHotel)}> Send to RTS </button></td>
+                                        <td className="view_more_td"> <button className="view_detail" onClick={()=>navigateToConfirmed(eachHotel)}> ... </button></td>
                                     </tr>
                                   
                                   </>)
@@ -278,6 +279,21 @@ const Home = styled.div`
         height:auto;
         margin:20px 0px;
     }
+    .view_more_td {
+        align-content: center;
+
+    }
+    .view_detail {
+        margin-left : 10px;
+        border:none;
+        outline:none;
+        padding:3px 7px;
+        background-color: #fff;
+        letter-spacing : 0.6em;
+        font-weight : 900;
+        position : center;
+        border-radius: 15px 15px;
+      }
     .photo1{
         width:30px;
         height:30px;

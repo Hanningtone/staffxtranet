@@ -4,6 +4,7 @@ import React, { useContext, useEffect, useState, useCallback } from "react";
 import {Context}  from '../context';
 import finalPropsSelectorFactory from "react-redux/es/connect/selectorFactory";
 import makeRequest from "../utils/fetch-request";
+import { GrView } from 'react-icons/gr';
 
 
 const HomePage = (user: any) => {
