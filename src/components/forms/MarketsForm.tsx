@@ -21,16 +21,6 @@ const CategoriesForm = (props: Props) => {
     }
 
     const onSubmit = (values: any) => {
-<<<<<<< HEAD
-        values = [
-            {
-              "name": "Kakamega",
-              "country": "Kenya",
-              "city": "Kakamega",
-            }
-          ]
-=======
->>>>>>> 9de18322d8a0933a15aa59ec342e624fa86136e7
         let endpoint = '/markets/create';
         
         makeRequest({url:endpoint, method:"post", data:values}).then(([status, result]) => {
