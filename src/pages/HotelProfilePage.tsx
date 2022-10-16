@@ -10,7 +10,8 @@ import HotelsMenu from "../components/hotels/HotelMenu";
 
 import React, { useContext, useEffect, useState } from "react";
 import {Context}  from '../context';
-import { useLocation} from "react-router-dom";
+import { useLocation, useParams} from "react-router-dom";
+import makeRequest from "../utils/fetch-request";
 
 const AnyReactComponent = ({ text }: any) => 
     <div className='map-marker'>
@@ -20,11 +21,39 @@ const AnyReactComponent = ({ text }: any) =>
          </div>
     </div>;
 
-const CategoriesPage = (user: any) => {
+const HotelProfilePage = (user: any) => {
     const {state} = useLocation();
     const [currentHotel, setCurrentHotel] = useState(state);
+    const [error, setError] = useState<any>();
+    const { id } = useParams();
 
 
+    const fetchHotelDetials = (id:number) => {
+      let _url = "/business/detail/1?with=house-rules@business_id,"
+         + "user-business-access@business_id,business-branch@business_id,"
+         + "business-branch@business_id,business-photos@business_id,"
+         + "room-amenities@business_id,room-perks@business_id,"
+         + "business-stats@business_id,customer_reviews@business_id";
+      
+  
+      makeRequest({ url: _url, method: "get", data: null }).then(
+        ([status, result]) => {
+          if (status !== 200) {
+            setError(result?.message || "Error, could not fetch records");
+          } else {
+            setCurrentHotel(result?.data || []);   
+     
+          }
+        }
+      );
+      
+    }
+
+    useEffect(()=> {
+        let h_id = Number(id);
+        fetchHotelDetials(h_id);
+
+    }, [])
     const defaultProps = {
         center: {
           lat: -1.2627149,
@@ -74,8 +103,8 @@ const CategoriesPage = (user: any) => {
                                             <i className="fa fa-bed"></i>
                                         </div>
                                         <div className="stat-top-wrapper">
-                                                <p className="stat-title">Total rooms on Uncover</p>
-                                                <p className="stat-total">0</p>
+                                                <p className="stat-title">Total Branches on Uncover</p>
+                                                <p className="stat-total">{currentHotel && currentHotel["business-stats"][0].total_branches}</p>
                                         </div>
                                     </div>
                             </div>
@@ -86,7 +115,7 @@ const CategoriesPage = (user: any) => {
                                         </div>
                                         <div className="stat-top-wrapper">
                                                 <p className="stat-title">Total rooms on Uncover</p>
-                                                <p className="stat-total">0</p>
+                                                <p className="stat-total">{currentHotel && currentHotel["business-stats"][0].available_rooms}</p>
                                         </div>
                                     </div>
                             </div>
@@ -97,7 +126,7 @@ const CategoriesPage = (user: any) => {
                                         </div>
                                         <div className="stat-top-wrapper">
                                                 <p className="stat-title">Views on Uncover</p>
-                                                <p className="stat-total">0</p>
+                                                <p className="stat-total">{currentHotel && currentHotel["business-stats"][0].profile_views}</p>
                                         </div>
                                     </div>
                             </div>
@@ -108,7 +137,7 @@ const CategoriesPage = (user: any) => {
                                         </div>
                                         <div className="stat-top-wrapper">
                                                 <p className="stat-title">Bookings on Uncover</p>
-                                                <p className="stat-total">0</p>
+                                                <p className="stat-total">{currentHotel && currentHotel["business-stats"][0].total_booking}</p>
                                         </div>
                                     </div>
                             </div>
@@ -125,27 +154,27 @@ const CategoriesPage = (user: any) => {
                                    <hr></hr>
                                    <div className="field-wrapper">
                                         <span className="left"> Name:</span>
-                                        <span>{currentHotel.name}</span>
+                                        <span>{currentHotel && currentHotel.name}</span>
                                     </div>
                                     <div className="field-wrapper">
                                         <span className="left">Category:</span>
-                                        <span>{currentHotel.category}</span>
+                                        <span>{currentHotel && currentHotel.category.category_name}</span>
                                     </div>
                                     <div className="field-wrapper">
                                         <span className="left">Market:</span>
-                                        <span>{currentHotel.market.market_name}</span>
+                                        <span>{currentHotel && currentHotel?.market?.market_name}</span>
                                     </div>
                                     <div className="field-wrapper">
                                         <span className="left">Property Type:</span>
-                                        <span>Villa</span>
+                                        <span>{currentHotel && currentHotel.property_type}</span>
                                     </div>
                                     <div className="field-wrapper">
                                         <span className="left">Primary Contact:</span>
-                                        <span>Villa</span>
+                                        <span>{ currentHotel && currentHotel.primary_contact_number}</span>
                                     </div>
                                     <div className="field-wrapper">
                                         <span className="left">Request to book enabled:</span>
-                                        <span>True</span>
+                                        <span>{currentHotel && currentHotel.request_to_book_enabled }</span>
                                     </div>
                                   
                                 </Profile>
@@ -179,15 +208,14 @@ const CategoriesPage = (user: any) => {
                                     </div>
                                    <hr></hr>
                                     <div className="profile-photo-wrapper">
-                                        <div className="profile-photo"></div>
-                                        <div className="profile-photo"></div>
-                                        <div className="profile-photo"></div>
-                                        <div className="profile-photo"></div>
-                                        <div className="profile-photo"></div>
-                                        <div className="profile-photo"></div>
+                                     
+                                      { currentHotel && currentHotel["business-photos"].map((photo:any) => {
+                                          return (<div className="profile-photo"><img src={photo.url_path} alt="" /></div>)
+                                        })
+                                      }
                                     </div>  
                                 </Profile>
-                                <Profile>
+                               { /*  <Profile>
                                    <div className="profile-header">
                                        <p>Why we love it</p>
                                        <div className="profile-controls">
@@ -207,7 +235,7 @@ const CategoriesPage = (user: any) => {
                                          <p><i className="fa fa-check-square"></i><span> Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,molestiae quas vel </span> </p>
                                       </div>
                                    </div>
-                                </Profile>
+                                </Profile> */}
                                    
                                 <Profile>
                                     <div className="profile-header">
@@ -215,58 +243,22 @@ const CategoriesPage = (user: any) => {
                                     </div>
                                     <hr></hr>
                                     <div className="profile-services">
-                                        <div className="profile-list">
-                                           <span>(X) m2 size of standard room</span>
-                                           <div className="profile-selector-wrapper" style={{width: 100}}>
-                                            <SwitchSelector
-                                                    onChange={onChange}
-                                                    options={options}
-                                                    initialSelectedIndex={initialSelectedIndex}
-                                                    backgroundColor={"#353b48"}
-                                                    fontColor={"#f5f6fa"}
-                                                />
-                                            </div>
-                                        </div>
+                                        { currentHotel && currentHotel["room-amenities"].map((am:any) => { 
+                                             return (<div className="profile-list">
+                                               <span><b>{am.name}</b> &nbsp; {am.description}</span>
+                                               <div className="profile-selector-wrapper" style={{width: 100}}>
+                                                <SwitchSelector
+                                                        onChange={onChange}
+                                                        options={options}
+                                                        initialSelectedIndex={initialSelectedIndex}
+                                                        backgroundColor={"#353b48"}
+                                                        fontColor={"#f5f6fa"}
+                                                    />
+                                                </div>
+                                            </div>)
+                                        })
+                                        }
 
-                                        <div className="profile-list">
-                                           <span>(X) m2 size of standard room</span>
-                                           <div className="profile-selector-wrapper" style={{width: 100}}>
-                                            <SwitchSelector
-                                                    onChange={onChange}
-                                                    options={options}
-                                                    initialSelectedIndex={initialSelectedIndex}
-                                                    backgroundColor={"#353b48"}
-                                                    fontColor={"#f5f6fa"}
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div className="profile-list">
-                                           <span>(X) m2 size of standard room</span>
-                                           <div className="profile-selector-wrapper" style={{width: 100}}>
-                                            <SwitchSelector
-                                                    onChange={onChange}
-                                                    options={options}
-                                                    initialSelectedIndex={initialSelectedIndex}
-                                                    backgroundColor={"#353b48"}
-                                                    fontColor={"#f5f6fa"}
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div className="profile-list">
-                                           <span>(X) m2 size of standard room</span>
-                                           <div className="profile-selector-wrapper" style={{width: 100}}>
-                                            <SwitchSelector
-                                                    onChange={onChange}
-                                                    options={options}
-                                                    initialSelectedIndex={initialSelectedIndex}
-                                                    backgroundColor={"#353b48"}
-                                                    fontColor={"#f5f6fa"}
-                                                />
-                                            </div>
-                                        </div>
-                                         
                                     </div>
                                 </Profile>
 
@@ -279,15 +271,13 @@ const CategoriesPage = (user: any) => {
                                     </div>
                                    <hr></hr>
                                    <div className="profile-content">
-                                      <div className="profile-list">
-                                         <p><i className="fa fa-check-square"></i><span> Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,molestiae quas vel </span> </p>
-                                      </div>
-                                      <div className="profile-list">
-                                          <p><i className="fa fa-check-square"></i> <span> Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,molestiae quas vel </span> </p>
-                                      </div>
-                                      <div className="profile-list">
-                                         <p><i className="fa fa-check-square"></i><span> Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,molestiae quas vel </span> </p>
-                                      </div>
+                                        { currentHotel && currentHotel["room-perks"].map((perk:any) => {
+
+                                           return (<div className="profile-list">
+                                                 <p><i className="fa fa-check-square"></i><span><b>{perk.name}</b> &nbsp; {perk.description}</span> </p>
+                                              </div>)
+                                          })
+                                      }
                                    </div>
                                     
                                 </Profile>
@@ -303,14 +293,16 @@ const CategoriesPage = (user: any) => {
                                     </div>
                                     </div>
                                    <hr></hr>
-                                   {currentHotel.admin_users?.map( (adminUser : any) => {
+                                   {currentHotel && currentHotel?.["user-business-access"]?.map( (adminUser : any) => {
                                     return ( 
                                     <div className="profile-wrapper">
                                         <div className="item-photo"></div>
                                             <div className="item-datails">
                                                 <h6>{ adminUser.user} </h6>
-                                                <p>0725920576</p>
-                                                <p> Manager</p>
+                                                <p>{adminUser.contact}</p>
+                                                <p> { adminUser.roles.map((role:any) => {
+                                                     return role.role;   
+                                                })}</p>
                                             </div>
                                         </div> )
                                    })}
@@ -325,15 +317,12 @@ const CategoriesPage = (user: any) => {
                                     </div>
                                    <hr></hr>
                                    <div className="profile-content">
-                                      <div className="profile-list">
-                                         <p><i className="fa fa-check-square"></i><span> Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,molestiae quas vel </span> </p>
-                                      </div>
-                                      <div className="profile-list">
-                                          <p><i className="fa fa-check-square"></i> <span> Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,molestiae quas vel </span> </p>
-                                      </div>
-                                      <div className="profile-list">
-                                         <p><i className="fa fa-check-square"></i><span> Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,molestiae quas vel </span> </p>
-                                      </div>
+                                      { currentHotel && currentHotel["house-rules"].map((rule:any) => { 
+                                          return (<div className="profile-list">
+                                             <p><i className="fa fa-check-square"></i><span> {rule.narration} </span> </p>
+                                          </div>)
+                                          } 
+                                      )}
                                    </div>
                                 </Profile>
                                
@@ -346,11 +335,16 @@ const CategoriesPage = (user: any) => {
                                     </div>
                                    <hr></hr>
                                    <div className="profile-wrapper">
-                                     <div className="item-photo"></div>
-                                     <div className="item-datails">
-                                        <h6>Hilton Nairobi </h6>
-                                        <p>Nairobi</p> 
-                                     </div>
+                                    {currentHotel && currentHotel["business-branch"].map((branch:any) => {
+                                      return (<>
+                                             <div className="item-photo"></div>
+                                             <div className="item-datails">
+                                                <h6>{branch.branch_name}</h6>
+                                                <p>{branch.description}</p> 
+                                             </div>
+                                         </>)
+                                         })
+                                     }
                                    </div>
                                 </Profile>
 
@@ -360,9 +354,10 @@ const CategoriesPage = (user: any) => {
                                     </div>
                                    <hr></hr>
                                    <div className="profile-wrapper">
-                                    <div><span>Bookings <br/> <h5>200</h5></span></div>
-                                    <div><span>Likes <br/> <h5>50</h5></span></div>
-                                    <div><span>Dislikes <br/> <h5>0</h5></span></div>
+                                    {currentHotel && currentHotel["customer_reviews"].map((review:any) => { 
+                                            return (<div><span>Rating <br/> <h5> { review.rate }</h5></span></div>)
+                                        })
+                                    }
                                    </div>
                                 </Profile>
                                
@@ -520,4 +515,4 @@ const Profile = styled.div`{
     }
     `
 
-export default CategoriesPage;
+export default HotelProfilePage;

@@ -39,7 +39,7 @@ const Links= () => {
         <Route path="/categories" element={<CategoriesPage user={user}/>}/>
         <Route path="/markets" element={<MarketsPage user={user}/>}/>
         <Route path="/hotels" element={<HotelsPage user={user}/>}/>
-        <Route path="/hotel-profile/{id}" element={<HotelProfilePage user={user}/>}/>
+        <Route path="/hotel-profile/:id" element={<HotelProfilePage user={user}/>}/>
         <Route path="/hotel-rooms" element={<HotelRoomesPage user={user}/>}/>
         <Route path="/bookings" element={<BookingsPage user={user}/>}/>
         <Route path="/promos" element={<PromosPage user={user}/>}/>

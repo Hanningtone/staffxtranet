@@ -1,11 +1,14 @@
 import styled from "styled-components";
+import { useParams} from "react-router-dom";
 
 const HotelsMenu = (props: any) => {
+
+    const {id} = useParams();
 
     return (
         <Home>
             <div className="booking-tab">
-                <p> <a href="/hotel-profile"><i className="fa fa-hotel"></i> Profile </a></p> 
+                <p> <a href={`/hotel-profile/${id}`}><i className="fa fa-hotel"></i> Profile </a></p> 
                 <hr/>
                 <p> <a href="/hotel-rooms"><i className="fa fa-calendar"></i> Room Availability </a></p> 
             </div>
