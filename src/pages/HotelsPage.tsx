@@ -28,7 +28,8 @@ const HotelsPage = (user: any) => {
     const [submitTitle, setSubmitTitle] = useState(" Create a Hotel");
     const [selectedrecord, setSelectedRecord] = useState(null);
     const [error, setError] = useState(null);
-    const [hotels, setHotels] = useState([]);
+    const [hotels, setHotels] = useState<any>([]);
+    const [extras, setExtras] = useState<any>();
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
@@ -70,21 +71,23 @@ const HotelsPage = (user: any) => {
   
     }, [showModal])
   
-    const fetchEvents = useCallback(() => {
-      let _url = "/business/get";
+    const fetchEvents = () => {
+      let _url = "/business/get?append=booking-page-stat";
   
       makeRequest({ url: _url, method: "get", data: null }).then(
         ([status, result]) => {
           if (status !== 200) {
             setError(result?.message || "Error, could not fetch records");
           } else {
-            setHotels(result?.data || []);     
+            setHotels(result?.data || []);   
+            console.log("My extras ", result?.extra)
+            setExtras(result?.extra);       
      
           }
         }
       );
       
-    }, [state?.eventspage],);
+    }
     
     useEffect(() => {
       
@@ -107,7 +110,8 @@ const HotelsPage = (user: any) => {
   
     useEffect(() => {
       fetchEvents();
-    }, [fetchEvents]);
+    }, []);
+    
     const navigateToConfirmed= (eachHotel : any) =>{
         navigate(`/hotel-profile/${eachHotel.id}`, { state: eachHotel}); // here we will redirect user and send your data into state
      }
@@ -147,7 +151,7 @@ const hotelOnclickHandler = (props : any) => {
                                         </div>
                                         <div className="stat-top-wrapper">
                                                 <p className="stat-title">Total Hotels</p>
-                                                <p className="stat-total">{hotels.length}</p>
+                                                <p className="stat-total">{hotels?.length}</p>
                                         </div>
                                         <div className="stat-bottom-wrapper">
                                             <p><span className="text-success fw-bold">+5% </span>increase since last month</p>
@@ -161,7 +165,7 @@ const hotelOnclickHandler = (props : any) => {
                                         </div>
                                         <div className="stat-top-wrapper">
                                             <p className="stat-title">Rooms Available</p>
-                                            <p className="stat-total">3000</p>
+                                            <p className="stat-total">{ extras && extras?.["booking-page-stat"][0].rooms}</p>
                                     </div>
                                     <div className="stat-bottom-wrapper">
                                         <p><span className="text-danger fw-bold">-5% </span>decrease since last month</p>
@@ -174,11 +178,11 @@ const hotelOnclickHandler = (props : any) => {
                                         <i className="fa fa-users"></i>
                                     </div>
                                         <div className="stat-top-wrapper">
-                                            <p className="stat-title">Rooms Booked</p>
-                                            <p className="stat-total">300</p>
+                                            <p className="stat-title">Rooms Booked Today</p>
+                                            <p className="stat-total">{  extras && extras?.["booking-page-stat"][0].rooms_booked}</p>
                                         </div>
                                         <div className="stat-bottom-wrapper">
-                                        <p><span className="text-success fw-bold">+5% </span>increase since last month</p>
+                                        <p><span className="text-success fw-bold"> </span> These are rooms booked today</p>
                                         </div>
                                     </div>
                                 </div>
@@ -189,10 +193,10 @@ const hotelOnclickHandler = (props : any) => {
                                     </div> 
                                         <div className="stat-top-wrapper">
                                             <p className="stat-title">Fully Booked Hotels</p>
-                                            <p className="stat-total">300</p>
+                                            <p className="stat-total">{ extras && extras?.["booking-page-stat"][0].fully_booked_hotels}</p>
                                         </div>
                                         <div className="stat-bottom-wrapper">
-                                        <p><span className="text-danger fw-bold">-5% </span>decrease since last month</p>
+                                        <p><span className="text-danger fw-bold">-5% </span>By today, these are the fully bo</p>
                                         </div>
                                     </div>
                                 </div>
@@ -209,7 +213,7 @@ const hotelOnclickHandler = (props : any) => {
                                     <td>Number of rooms</td>
                                     <td>Admin Link</td>
                                     <td>Category</td>
-                                    <td>Branches</td>
+                                    <td>No. of Branches</td>
                                     <td>Markets</td>
                                     <td>Manager(s)</td>
                                     <td> View Detail &nbsp;</td>
@@ -237,9 +241,9 @@ const hotelOnclickHandler = (props : any) => {
                                         <td><span className="default">{eachHotel.total_rooms || 0}</span></td>
                                         <td> { eachHotel.admin_link ? <a href="#"> {eachHotel.admin_link} </a> : " No Admin Link !!"} </td>
                                         <td><span className="category">{eachHotel.category || " Unidentified "}</span></td>
-                                        <td><span className="default"> {eachHotel.branch || " No Hotel Branches"} </span></td>
+                                        <td><span className="default"> {eachHotel.branches.length || " No Hotel Branches"} </span></td>
                                         <td><span className="default"> {eachHotel.market.market_name} </span></td>
-                                        <td><Avatar color={'orange'} round={true} name="Wim Mostmans" size="25" /> {eachHotel.admin_users.length || " No Admin"}</td>
+                                        <td><Avatar color={'orange'} round={true} name=" Hans Miller" size="25" /> {eachHotel.admin_users.length || " No Admin"}</td>
                                         <td className="view_more_td"> <button className="view_detail" onClick={()=>navigateToConfirmed(eachHotel)}> ... </button></td>
                                     </tr>
                                   
