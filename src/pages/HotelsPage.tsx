@@ -109,7 +109,7 @@ const HotelsPage = (user: any) => {
       fetchEvents();
     }, [fetchEvents]);
     const navigateToConfirmed= (eachHotel : any) =>{
-        navigate(`/hotel-profile`, { state: eachHotel}); // here we will redirect user and send your data into state
+        navigate(`/hotel-profile/${eachHotel.id}`, { state: eachHotel}); // here we will redirect user and send your data into state
      }
 
 const hotelOnclickHandler = (props : any) => {
