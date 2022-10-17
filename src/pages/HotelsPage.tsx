@@ -210,7 +210,7 @@ const hotelOnclickHandler = (props : any) => {
                                     <td>Name</td>
                                     <td>Total Bookings</td>
                                     <td>Photos</td>
-                                    <td>Number of rooms</td>
+                                    <td>No of available rooms</td>
                                     <td>Admin Link</td>
                                     <td>Category</td>
                                     <td>No. of Branches</td>
@@ -238,7 +238,7 @@ const hotelOnclickHandler = (props : any) => {
                                                 <span className='photos-number'>&nbsp; +5</span>
                                             </div>
                                         </td>
-                                        <td><span className="default">{eachHotel.total_rooms || 0}</span></td>
+                                        <td><span className="default">{eachHotel.available_rooms || 0}</span></td>
                                         <td> { eachHotel.admin_link ? <a href="#"> {eachHotel.admin_link} </a> : " No Admin Link !!"} </td>
                                         <td><span className="category">{eachHotel.category || " Unidentified "}</span></td>
                                         <td><span className="default"> {eachHotel.branches.length || " No Hotel Branches"} </span></td>
