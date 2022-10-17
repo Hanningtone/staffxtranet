@@ -10,6 +10,7 @@ import CustomModalPane from "../utils/_modal";
 import { getFromLocalStorage, removeItem } from '../utils/local-storage';
 import { forEachChild } from "typescript";
 import { FaUserEdit } from 'react-icons/fa'
+import ChangePasswordForm from "../components/forms/ChangePasswordForm";
 
 
 
@@ -17,6 +18,7 @@ const UsersList = (props: any) => {
   const [userList, setUserList] = useState({});
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [changePasswordModal, setChangePasswordModal] = useState(false); 
   const [message, setMessage] = useState("");
   const [state, dispach] = useContext(Context);
   const [classname, setClassName] = useState("");
@@ -25,6 +27,7 @@ const UsersList = (props: any) => {
   const [selectedrecord, setSelectedRecord] = useState(user);
   const[submitTitle, setSubmitTitle] = useState("Create an User");
   const[modalTitle, setModalTitle] = useState("Create User");
+  const [userToken, setUserToken] =  useState();
 
   const model = 'users';
 
@@ -32,7 +35,6 @@ const UsersList = (props: any) => {
 useEffect(() => {
   dispach({type:"SET", key:'context', payload:'userspage'});
 }, [])
-
 // Handle Edit
 
 const onEditFunction = (event : any, model : any, user: any) => {
@@ -48,6 +50,9 @@ const onEditFunction = (event : any, model : any, user: any) => {
         console.log(" And our user is", user);
     }
 }, []);
+useEffect( () => {
+  setUserToken(user?.api_token)
+})
 
 
 // fetch users from API
@@ -77,7 +82,6 @@ useEffect(() => {
         if (status !== 200) {
           setError(result?.message || "Error, could not fetch records");
         } else {
-          console.log(result);
           setUserList(result?.data || []);
         }
       }
@@ -106,7 +110,6 @@ useEffect(() => {
 
   useEffect(() => {
     fetchUsers();
-    console.log(userList);
   }, [fetchUsers]);
 
 
@@ -142,9 +145,7 @@ useEffect(() => {
                                     </div>
                                     <div className="btnwrapper">
                                             <FaUserEdit />
-                                            <button onClick={ (event) => onEditFunction(event, model, user.id) }>Edit Details  </button>
-                                            
-                                            
+                                            <button onClick={ (event) => onEditFunction(event, model, user.id) }>Edit Details  </button> 
                                     </div>
                                 </div>
                                 <hr className="firstchild" />
@@ -168,7 +169,7 @@ useEffect(() => {
                                     <span className="change-password">
                                     <span className="aste"> **** </span> &nbsp; &nbsp;
                                     <span>
-                                    <button className="change__password__btn"> Change Password </button>
+                                    <button className="change__password__btn" onClick={ () => setChangePasswordModal(true)}> Change Password </button>
                                     </span>
                                     </span>
                                 </div>
@@ -213,6 +214,19 @@ useEffect(() => {
                 submitTitle = { submitTitle }
                 />
               </CustomModalPane>
+              <CustomModalPane
+                show={changePasswordModal}
+                title=" Change Password"
+                target="change-password"
+                hideThisModal={() => setChangePasswordModal(false)}
+              >
+                {message && <div className={classname}>{message}</div>}
+                <ChangePasswordForm 
+                setShowModal={changePasswordModal}
+                token={userToken}
+                />
+              </CustomModalPane>
+
 
       </Home>
     </AdminLayout>

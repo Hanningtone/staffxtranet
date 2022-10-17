@@ -104,7 +104,7 @@ const HotelProfilePage = (user: any) => {
                                         </div>
                                         <div className="stat-top-wrapper">
                                                 <p className="stat-title">Total Branches on Uncover</p>
-                                                <p className="stat-total">{currentHotel && currentHotel["business-stats"][0].total_branches}</p>
+                                                <p className="stat-total">{currentHotel && currentHotel["business-stats"]?.[0]?.total_branches}</p>
                                         </div>
                                     </div>
                             </div>
@@ -115,7 +115,7 @@ const HotelProfilePage = (user: any) => {
                                         </div>
                                         <div className="stat-top-wrapper">
                                                 <p className="stat-title">Total rooms on Uncover</p>
-                                                <p className="stat-total">{currentHotel && currentHotel["business-stats"][0].available_rooms}</p>
+                                                <p className="stat-total">{currentHotel && currentHotel["business-stats"]?.[0]?.available_rooms}</p>
                                         </div>
                                     </div>
                             </div>
@@ -126,7 +126,7 @@ const HotelProfilePage = (user: any) => {
                                         </div>
                                         <div className="stat-top-wrapper">
                                                 <p className="stat-title">Views on Uncover</p>
-                                                <p className="stat-total">{currentHotel && currentHotel["business-stats"][0].profile_views}</p>
+                                                <p className="stat-total">{currentHotel && currentHotel["business-stats"]?.[0]?.profile_views}</p>
                                         </div>
                                     </div>
                             </div>
@@ -137,7 +137,7 @@ const HotelProfilePage = (user: any) => {
                                         </div>
                                         <div className="stat-top-wrapper">
                                                 <p className="stat-title">Bookings on Uncover</p>
-                                                <p className="stat-total">{currentHotel && currentHotel["business-stats"][0].total_booking}</p>
+                                                <p className="stat-total">{currentHotel && currentHotel["business-stats"]?.[0]?.total_booking}</p>
                                         </div>
                                     </div>
                             </div>
@@ -158,7 +158,7 @@ const HotelProfilePage = (user: any) => {
                                     </div>
                                     <div className="field-wrapper">
                                         <span className="left">Category:</span>
-                                        <span>{currentHotel && currentHotel.category.category_name}</span>
+                                        <span>{currentHotel && currentHotel.category?.category_name}</span>
                                     </div>
                                     <div className="field-wrapper">
                                         <span className="left">Market:</span>
@@ -209,7 +209,7 @@ const HotelProfilePage = (user: any) => {
                                    <hr></hr>
                                     <div className="profile-photo-wrapper">
                                      
-                                      { currentHotel && currentHotel["business-photos"].map((photo:any) => {
+                                      { currentHotel && currentHotel["business-photos"]?.map((photo:any) => {
                                           return (<div className="profile-photo"><img src={photo.url_path} alt="" /></div>)
                                         })
                                       }
@@ -243,7 +243,7 @@ const HotelProfilePage = (user: any) => {
                                     </div>
                                     <hr></hr>
                                     <div className="profile-services">
-                                        { currentHotel && currentHotel["room-amenities"].map((am:any) => { 
+                                        { currentHotel && currentHotel["room-amenities"]?.map((am:any) => { 
                                              return (<div className="profile-list">
                                                <span><b>{am.name}</b> &nbsp; {am.description}</span>
                                                <div className="profile-selector-wrapper" style={{width: 100}}>
@@ -271,7 +271,7 @@ const HotelProfilePage = (user: any) => {
                                     </div>
                                    <hr></hr>
                                    <div className="profile-content">
-                                        { currentHotel && currentHotel["room-perks"].map((perk:any) => {
+                                        { currentHotel && currentHotel["room-perks"]?.map((perk:any) => {
 
                                            return (<div className="profile-list">
                                                  <p><i className="fa fa-check-square"></i><span><b>{perk.name}</b> &nbsp; {perk.description}</span> </p>
@@ -317,7 +317,7 @@ const HotelProfilePage = (user: any) => {
                                     </div>
                                    <hr></hr>
                                    <div className="profile-content">
-                                      { currentHotel && currentHotel["house-rules"].map((rule:any) => { 
+                                      { currentHotel && currentHotel["house-rules"]?.map((rule:any) => { 
                                           return (<div className="profile-list">
                                              <p><i className="fa fa-check-square"></i><span> {rule.narration} </span> </p>
                                           </div>)
@@ -335,7 +335,7 @@ const HotelProfilePage = (user: any) => {
                                     </div>
                                    <hr></hr>
                                    <div className="profile-wrapper">
-                                    {currentHotel && currentHotel["business-branch"].map((branch:any) => {
+                                    {currentHotel && currentHotel["business-branch"]?.map((branch:any) => {
                                       return (<>
                                              <div className="item-photo"></div>
                                              <div className="item-datails">
@@ -354,7 +354,7 @@ const HotelProfilePage = (user: any) => {
                                     </div>
                                    <hr></hr>
                                    <div className="profile-wrapper">
-                                    {currentHotel && currentHotel["customer_reviews"].map((review:any) => { 
+                                    {currentHotel && currentHotel["customer_reviews"]?.map((review:any) => { 
                                             return (<div><span>Rating <br/> <h5> { review.rate }</h5></span></div>)
                                         })
                                     }
