@@ -1,59 +1,113 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useForm } from "react-hook-form";
+import makeRequest from "../../utils/fetch-request";
+import {useNavigate} from 'react-router-dom';
+
+import PlaceAutoComplete from "./PlaceSelector"
+
 
 interface Props {
     setShowModal: any
 }
 
 const HotelForm = (props: Props) => {
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+    const [error, setError] = useState();
+
+
+    const handleSubmitHotel = (values:any) => {                                            
+        let endpoint = '/';
+        console.log(" Values Passed ", values);                                       
+        setLoading(true)                                                      
+        makeRequest({url: endpoint, method: 'POST', data: values}).then(([status, response]) => {
+            console.log(" Response Status", response, status);
+            setLoading(false)                                                 
+            if(status === 200 ){
+                
+                navigate('/hotels')
+                console.log(" Response on 200", response, status)
+            } else {             
+                console.log("Response error", response, status);
+                setError(response.message)
+            }                                                                   
+        })                                                                      
+    }
+
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [colorHexCode, setColorHexCode] = useState("orange");
 
     const onSubmit = (values: any) => {
     }
+
+    
+
     return(
         <FormWrapper>
             <form>
-                <div className="form-group my-3">
-                    <label htmlFor="name">Hotel Name</label>
-                    <input type="text" className="form-control" id="name"  placeholder="Enter hotel name" />
-                </div>
+                <h3 className="form-title plain">Create New Hotel</h3>
+                <div className="modal-form-field-view">
 
-                <div className="form-group my-3">
-                    <label htmlFor="location">Market</label>
-                    <input type="text" className="form-control" id="location"  placeholder="Search.." />
-                </div>
-                <div className="form-group my-3">
-                    <label htmlFor="hotel-name">Category</label>
-                    <input type="text" className="form-control" id="hotel-name"  placeholder="Search" />
-                </div>
-                <div className="form-group my-3">
-                    <label htmlFor="hotel-name"> Category</label>
-                    <div>
-                        <select className="form-control" name="categories">
-                            <option value="">Select</option>
-                        </select>
+                    <div className="">
+                        <label htmlFor="name">Hotel Name</label>
+                        <input type="text" className="form-control" id="name"  placeholder="Enter hotel name" 
+                        aria-invalid={errors.name ? "true" : "false"}
+                            {...register('name', { required: true})}
+                        />
+                    </div>
+
+                    <div className="form-group my-3">
+                        <label htmlFor="market">Market</label>
+                        <div>
+                            <select className="form-control" aria-invalid={errors.market ? "true" : "false"}
+                            {...register('market', { required: true})}>
+
+                                <option value="">Select</option>
+
+                                {/*Fetch from api*/}
+
+
+                            </select>
+
+                        </div>
+                    </div>
+                    
+                    <div className="form-group my-3">
+                        <label htmlFor="hotel-category"> Category</label>
+                        <div>
+                            <select className="form-control" aria-invalid={errors.category ? "true" : "false"}
+                            {...register('category', { required: true})}>
+
+                                <option value="">Select</option>
+
+                                {/*Fetch from api*/}
+
+
+                            </select>
+
+                        </div>
+                    </div>
+                    <div className="form-group my-3">
+                            <label htmlFor="description">Hotel Description</label>
+                            <textarea className="form-control" id="description"  rows={6} aria-invalid={errors.name ? "true" : "false"}
+                            {...register('description', { required: false})} placeholder="Enter a description of this hotel"></textarea>
+                    </div>
+                    <div className="form-group my-3">
+                                                        
+                            <PlaceAutoComplete/>
+                              
+
                     </div>
                 </div>
-                <div className="form-group my-3">
-                        <label htmlFor="description">Hotel Description</label>
-                        <textarea className="form-control" id="description"  rows={6} ></textarea>
-                </div>
-                <div className="form-group my-3">
-                        <label>Directions</label>
-                        <div className="row">
-                            <div className="col-lg-6">
-                                <input type="number" className="form-control" id="lati"  placeholder="Latitude" />
-                            </div>
-                            <div className="col-lg-6">
-                                <input type="number" className="form-control" id="longi"  placeholder="Longitude" />
-                            </div>
-                        </div>
-                </div>
                 <div className="flex-row-btwn modal-bar-wrapper">
-                    <button className="btn btn-outline-danger" type="button" onClick={()=>props.setShowModal()}>Close</button>
-                    <button className="btn btn-outline-primary ms-2" type="submit">Save</button>
+                    <button className="btn btn-danger" type="button" onClick={()=>props.setShowModal()}>Cancel</button>
+
+                    {!loading ?
+                            <button type="submit" className="btn btn-primary ms-2">   Create  </button>
+                            :
+                            <button type="button" className="btn btn-primary" disabled>   Please wait...  </button>
+                        }
                 </div>
             </form>
         </FormWrapper>

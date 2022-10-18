@@ -303,4 +303,23 @@ export default createGlobalStyle`
     .checkwrapper .time {
         font-size: 15px;
     }
+
+
+    .modal-form-field-view {
+        max-height: 399px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .form-title {
+    color: #188754;
+    -webkit-text-decoration: underline;
+    /* text-decoration: underline; */
+    width: 100%;
+    border-bottom: 2px solid;
+    margin-bottom: 20px;
+    padding-bottom: 7px;
+    font-size: 18px;
+}
+
      `;
