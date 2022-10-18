@@ -4,7 +4,6 @@ import { useRef, useEffect } from "react";
 const PlaceAutoComplete = () => {
  const autoCompleteRef = useRef();
  const inputRef = useRef();
- 
  const options = {
   componentRestrictions: { country: "ng" },
   fields: ["address_components", "geometry", "icon", "name"],

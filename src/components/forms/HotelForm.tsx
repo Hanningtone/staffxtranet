@@ -3,9 +3,9 @@ import styled from "styled-components";
 import { useForm } from "react-hook-form";
 import makeRequest from "../../utils/fetch-request";
 import {useNavigate} from 'react-router-dom';
-
 import PlaceAutoComplete from "./PlaceSelector"
-
+import HandleSelectorGetRequest from "./SelectOptions"
+ 
 
 interface Props {
     setShowModal: any
@@ -15,6 +15,7 @@ const HotelForm = (props: Props) => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const [error, setError] = useState();
+    let passendpoint = 'market/get';
 
 
     const handleSubmitHotel = (values:any) => {                                            
@@ -45,7 +46,7 @@ const HotelForm = (props: Props) => {
 
     return(
         <FormWrapper>
-            <form>
+            <form onSubmit={handleSubmit(handleSubmitHotel)}>
                 <h3 className="form-title plain">Create New Hotel</h3>
                 <div className="modal-form-field-view">
 
@@ -60,15 +61,11 @@ const HotelForm = (props: Props) => {
                     <div className="form-group my-3">
                         <label htmlFor="market">Market</label>
                         <div>
-                            <select className="form-control" aria-invalid={errors.market ? "true" : "false"}
-                            {...register('market', { required: true})}>
-
-                                <option value="">Select</option>
-
+                                
+                                <HandleSelectorGetRequest endpoint= "/market/get" text="market_name" column="id"/>
                                 {/*Fetch from api*/}
 
 
-                            </select>
 
                         </div>
                     </div>
@@ -94,9 +91,10 @@ const HotelForm = (props: Props) => {
                             {...register('description', { required: false})} placeholder="Enter a description of this hotel"></textarea>
                     </div>
                     <div className="form-group my-3">
-                                                        
+                            {/*Work out on the autocomplete*/}                           
                             <PlaceAutoComplete/>
-                              
+                             
+                             {/*Placeholder*/} 
 
                     </div>
                 </div>
