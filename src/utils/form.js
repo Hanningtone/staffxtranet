@@ -24,7 +24,7 @@ export const Form = (props) => {
         <Formik {...props} >
             <FormikForm className="needs-validation" noValidate="">
                 {props.children}
-            </FormikForm>
+            </FormikForm >
         </Formik>
     );
 };

@@ -19,7 +19,6 @@ import { GrView } from 'react-icons/gr';
 const HotelsPage = (user: any) => {
 
     const [showModal, setShowModal] = useState(false);
-    const [catData, setCatData] = useState();
     const [token, setToken] = useState();
     const [state, dispatch] = useContext(Context);
     const [clasname, setClassname] = useState('success');
@@ -120,12 +119,6 @@ const hotelOnclickHandler = (props : any) => {
 
 
 } 
-    
-
-
-    useEffect(()=>{
-        
-    }, [catData])
     // <a href="/hotel-profile" className="more" title="View more"><i className="fa fa-ellipsis-h"></i>
 
     return(

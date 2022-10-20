@@ -210,7 +210,6 @@ useEffect(() => {
               >
                 {message && <div className={classname}>{message}</div>}
                 <UsersForm setShowModal={showModal}
-                selectedRecord={selectedrecord}
                 submitTitle = { submitTitle }
                 />
               </CustomModalPane>

@@ -5,6 +5,8 @@ import {Context}  from '../context';
 import finalPropsSelectorFactory from "react-redux/es/connect/selectorFactory";
 import makeRequest from "../utils/fetch-request";
 import { GrView } from 'react-icons/gr';
+import { RiRadioButtonLine } from 'react-icons/ri';
+import { IoMdCheckmarkCircleOutline } from 'react-icons/io'; 
 
 
 const HomePage = (user: any) => {
@@ -121,7 +123,7 @@ const HomePage = (user: any) => {
                         <div className="graph-containers">
                              <div className="row p-4">
                                  <div className="col-lg-12">
-                                    <h6 className="mb-3 fs-6">Bookings and Booking Requests</h6>
+                                 <h6 className="mb-3 fs-6 " style={{ color : "#006666" }}> <RiRadioButtonLine /> 10 Recent Bookings &nbsp; &nbsp; &nbsp; <IoMdCheckmarkCircleOutline color="#FD350D"/></h6>
                                     <div className="bookings">
                                        <BookingSummary/>
                                     </div>

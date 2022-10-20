@@ -5,13 +5,16 @@ import {
     AdminLayout,
     SubHeader
  } from "../components";
-
 import HotelsMenu from "../components/hotels/HotelMenu";
-
 import React, { useContext, useEffect, useState } from "react";
 import {Context}  from '../context';
 import { useLocation, useParams} from "react-router-dom";
 import makeRequest from "../utils/fetch-request";
+import UsersForm from "../components/forms/UsersForm";
+import CustomModalPane from "../utils/_modal";
+import HouseRulesForm from "../components/forms/HouseRulesForm";
+
+
 
 const AnyReactComponent = ({ text }: any) => 
     <div className='map-marker'>
@@ -21,14 +24,45 @@ const AnyReactComponent = ({ text }: any) =>
          </div>
     </div>;
 
+    
+
 const HotelProfilePage = (user: any) => {
-    const {state} = useLocation();
-    const [currentHotel, setCurrentHotel] = useState(state);
+
     const [error, setError] = useState<any>();
     const { id } = useParams();
+    const [showHotelsModal, setShowHotelsModal] = useState(false);
+    const [showUsersModel, setShowUsersModal] = useState(false);
+    const [showHouseRulesModal, setShowHouseRuelsMOdal] = useState(false);
+    const [state, dispatch] = useContext(Context)
+    const [classname, setClassname] = useState('success');
+    const [message, setMessage] = useState();
+    const [currentHotel, setCurrentHotel] = useState<any>();
+   
+
+
+    useEffect(() => {
+        dispatch({type:"SET", key:'context', payload:'eventspage'});
+    }, [])
+  
+    useEffect(() => {
+      if(state?.context){
+        let status = state[state.context].status;
+        let message = state[state.context].message;
+        let data = state[state.context]?.data || {};
+  
+        if(status === true){
+          setClassname('alert alert-success');     
+        } else {
+          setClassname('alert alert-danger');
+        }
+        setMessage(message);
+      }
+  
+    }, [state?.eventspage])
 
 
     const fetchHotelDetials = (id:number) => {
+
       let _url = "/business/detail/1?with=house-rules@business_id,"
          + "user-business-access@business_id,business-branch@business_id,"
          + "business-branch@business_id,business-photos@business_id,"
@@ -289,7 +323,7 @@ const HotelProfilePage = (user: any) => {
                                     <div className="profile-header">
                                         <p>Managers</p>
                                     <div className="profile-controls">
-                                           <a href="#"><i className="fa fa-edit"></i> Add</a>
+                                            <a href="#" onClick={ () => setShowUsersModal(true)} > <i className="fa fa-edit" ></i> Add</a> 
                                     </div>
                                     </div>
                                    <hr></hr>
@@ -312,7 +346,7 @@ const HotelProfilePage = (user: any) => {
                                     <div className="profile-header">
                                         <p>House Rules</p>
                                         <div className="profile-controls">
-                                           <a href="#"><i className="fa fa-edit"></i> Add</a>
+                                           <a href="#" onClick={ () => setShowHouseRuelsMOdal(true)} ><i className="fa fa-edit"></i> Add</a>
                                         </div>
                                     </div>
                                    <hr></hr>
@@ -366,6 +400,43 @@ const HotelProfilePage = (user: any) => {
                     </div>
                 </div>
             </div>
+        <CustomModalPane show={showUsersModel}
+           title = " Create Users"
+           target = "create-users"
+           hideThisModal={() => setShowUsersModal(false)}
+           >
+            { message && <div className={classname}>{message}</div> }
+            <UsersForm 
+                setShowModal={showUsersModel}
+                submitTitle=" Add Manager"
+                />
+        </CustomModalPane>
+
+        <CustomModalPane show={showHouseRulesModal}
+           title = " Create House Rule"
+           target = "create-house-rule"
+           hideThisModal={() => setShowHouseRuelsMOdal(false)}
+           >
+            { message && <div className={classname}>{message}</div> }
+            <HouseRulesForm 
+                setShowModal={showHouseRulesModal}
+                submitTitle=" Add House Rule"
+                />
+        </CustomModalPane>
+
+        <CustomModalPane show={showHouseRulesModal}
+           title = " Create House Rule"
+           target = "create-house-rule"
+           hideThisModal={() => setShowHouseRuelsMOdal(false)}
+           >
+            { message && <div className={classname}>{message}</div> }
+            <HouseRulesForm 
+                setShowModal={showHouseRulesModal}
+                submitTitle=" Add House Rule"
+                />
+        </CustomModalPane>
+
+
         </AdminLayout>
     )
 }
