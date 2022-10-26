@@ -1,4 +1,4 @@
-import React, { useEffect, useState,useContext } from 'react';
+import React, { useEffect, useState,useContext,useRef } from 'react';
 import * as Yup from 'yup';
 import makeRequest from "./fetch-request";
 import { Context }  from '../context';
@@ -173,6 +173,32 @@ export const TextField = (props)  => {
             />
             <ErrorMessage name={name} render={msg => <div style={{ color: 'red' }} ><small>{msg}</small></div>} />
         </div>
+    );
+};
+
+export const PlaceSelector = (props) => {
+ const { name, label, placeholder } = props;
+
+ const autoCompleteRef = useRef();
+ const inputRef = useRef();
+ const options = {
+      types: ["establishment"],
+      componentRestrictions: { country: "ke" }
+ };
+ useEffect(() => {
+      autoCompleteRef.current = new window.google.maps.places.Autocomplete(
+       inputRef.current,
+       options
+      );
+ }, []);
+ return (
+        <div className="form-group">
+            {label && <label htmlFor={name} className="form-control-label">{label}</label>}
+            <input  id={name} className="form-control" name={name}  placeholder={placeholder} ref={inputRef} />
+           
+            <ErrorMessage name={name} render={msg => <div style={{ color: 'red' }} ><small>{msg}</small></div>} />
+        </div>
+      
     );
 };
 
@@ -419,6 +445,9 @@ export const getFormElement = (elementName, elementSchema) => {
     }
     if (elementSchema.type === "fileupload") {
         return <FileUploadField  {...props} />
+    }
+    if (elementSchema.type === "places") {
+        return <PlaceSelector  {...props} />
     }
 };
 

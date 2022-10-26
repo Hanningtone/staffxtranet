@@ -1,7 +1,7 @@
 import { useRef, useEffect } from "react";
 
 
-const PlaceAutoComplete = () => {
+const PlaceSelector = () => {
  const autoCompleteRef = useRef();
  const inputRef = useRef();
  const options = {
@@ -22,4 +22,4 @@ const PlaceAutoComplete = () => {
   </div>
  );
 };
-export default PlaceAutoComplete;
+export default PlaceSelector;

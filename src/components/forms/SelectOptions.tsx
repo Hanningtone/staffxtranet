@@ -3,37 +3,28 @@ import makeRequest from "../../utils/fetch-request";
 import { useForm } from "react-hook-form";
 
 
-
-
-
-
 	const HandleSelectorGetRequest = (props:{endpoint:string, column:any, text:any}) => {        
-			
-			  
-
-			console.log('This is a property', props.endpoint)
-		    
+					    
 		    const [error, setError] = useState();
 		    const [options, setOptions] = useState();
+
 		    useEffect(() => {
 
 	        makeRequest({url: props.endpoint, method: 'GET', data: null}).then(([status, response]) => {
 	            
-	            console.log("Response Status", response, status);
-	            
-	            if(status == 200 ){
-	            	
-      				
-      				setOptions(response.data);
+
+	            if(status !==200){
+	            	setError(response.message)
+	            	console.log(response.data)
 	            
 	            } else {             	
-	                console.log("Response error", response, status);
-	                setError(response.message)
+      				setOptions(response.data);
+
 	            }                                                                   
-	        })
-	        const valueText = props.column;
-	        const valueDisplay = props.text;
+	        });
 	        }, []);
+
+	      
 
 	    return (
                <>
@@ -41,7 +32,7 @@ import { useForm } from "react-hook-form";
 
                   <option value="">Select</option>
 
-              { 	options?.map( (eachObject) => {
+              { 	options && options?.map( (eachObject) => {
 
                	
                  <option key={eachObject.id} value={eachObject.id}> {eachObject.market_name} </option>
