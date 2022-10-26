@@ -241,7 +241,7 @@ export const DatabaeSelectField = (props) => {
                 console.log('Status === 200 ok')
                 setNewProps(props);
                 let options = []
-                Object.entries(data).forEach( ([key, record]) =>  {
+                Object.entries(data)?.forEach( ([key, record]) =>  {
                     let staff_options = {};
                     staff_options["value"] = record.id;          
                     let label_text = "";

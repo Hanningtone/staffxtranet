@@ -10,7 +10,7 @@ import React, { useContext, useEffect, useState } from "react";
 import {Context}  from '../context';
 import { useLocation, useParams} from "react-router-dom";
 import makeRequest from "../utils/fetch-request";
-import UsersForm from "../components/forms/UsersForm";
+import BusinessUsersForm from "../components/forms/BusinessUsersForm";
 import CustomModalPane from "../utils/_modal";
 import HouseRulesForm from "../components/forms/HouseRulesForm";
 
@@ -21,7 +21,7 @@ const AnyReactComponent = ({ text }: any) =>
         <i className='fa fa-map-marker'/>
         <div className='marker-text'>
             <p>{text}</p>
-         </div>
+         </div> 
     </div>;
 
     
@@ -63,7 +63,7 @@ const HotelProfilePage = (user: any) => {
 
     const fetchHotelDetials = (id:number) => {
 
-      let _url = "/business/detail/1?with=house-rules@business_id,"
+      let _url = "/business/detail/2?with=house-rules@business_id,"
          + "user-business-access@business_id,business-branch@business_id,"
          + "business-branch@business_id,business-photos@business_id,"
          + "room-amenities@business_id,room-perks@business_id,"
@@ -114,7 +114,7 @@ const HotelProfilePage = (user: any) => {
      const onChange = (newValue : any) => {
         console.log(newValue);
     };
-
+    
      const initialSelectedIndex = options.findIndex(({value}) => value === "bar");
 
     return (
@@ -138,7 +138,7 @@ const HotelProfilePage = (user: any) => {
                                         </div>
                                         <div className="stat-top-wrapper">
                                                 <p className="stat-title">Total Branches on Uncover</p>
-                                                <p className="stat-total">{currentHotel && currentHotel["business-stats"]?.[0]?.total_branches}</p>
+                                                <p className="stat-total"> {currentHotel && currentHotel["business-stats"]?.[0]?.total_branches} </p>
                                         </div>
                                     </div>
                             </div>
@@ -368,8 +368,8 @@ const HotelProfilePage = (user: any) => {
                                         </div>
                                     </div>
                                    <hr></hr>
-                                   <div className="profile-wrapper">
-                                    {currentHotel && currentHotel["business-branch"]?.map((branch:any) => {
+                                   <div className="profile-wrapper">                                    
+                                    {currentHotel && currentHotel["business-branch"].map((branch:any) => {
                                       return (<>
                                              <div className="item-photo"></div>
                                              <div className="item-datails">
@@ -406,7 +406,7 @@ const HotelProfilePage = (user: any) => {
            hideThisModal={() => setShowUsersModal(false)}
            >
             { message && <div className={classname}>{message}</div> }
-            <UsersForm 
+            <BusinessUsersForm 
                 setShowModal={showUsersModel}
                 submitTitle=" Add Manager"
                 />
