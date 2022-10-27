@@ -55,8 +55,8 @@ const HotelForm = (props: Props) => {
         <FormWrapper>
         <h3 className="form-title plain">Create New Hotel</h3>
            {LoadForm(schema, submitLabel, endpoint)}
-           <button class="btn btn-danger" onClick={()=>props.setShowModal()} style={{
-    float: "right", marginTop:-30}}>Cancel</button>
+           <button className="btn btn-danger" onClick={()=>props.setShowModal()} style={{
+            float: "right", marginTop:-30}}>Cancel</button>
         </FormWrapper>
     )
 }

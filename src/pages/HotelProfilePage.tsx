@@ -13,7 +13,8 @@ import makeRequest from "../utils/fetch-request";
 import BusinessUsersForm from "../components/forms/BusinessUsersForm";
 import CustomModalPane from "../utils/_modal";
 import HouseRulesForm from "../components/forms/HouseRulesForm";
-
+import BusinessBranchesForm from "../components/forms/BusinessBranchesForm";
+import { TiDelete } from 'react-icons/ti'
 
 
 const AnyReactComponent = ({ text }: any) => 
@@ -30,7 +31,7 @@ const HotelProfilePage = (user: any) => {
 
     const [error, setError] = useState<any>();
     const { id } = useParams();
-    const [showHotelsModal, setShowHotelsModal] = useState(false);
+    const [showHotelBranchModal, setShowHotelBranchModal] = useState(false);
     const [showUsersModel, setShowUsersModal] = useState(false);
     const [showHouseRulesModal, setShowHouseRuelsMOdal] = useState(false);
     const [state, dispatch] = useContext(Context)
@@ -63,13 +64,12 @@ const HotelProfilePage = (user: any) => {
 
     const fetchHotelDetials = (id:number) => {
 
-      let _url = "/business/detail/2?with=house-rules@business_id,"
+      let _url = "/business/detail/1?with=house-rules@business_id,"
          + "user-business-access@business_id,business-branch@business_id,"
          + "business-branch@business_id,business-photos@business_id,"
          + "room-amenities@business_id,room-perks@business_id,"
          + "business-stats@business_id,customer_reviews@business_id";
-      
-  
+
       makeRequest({ url: _url, method: "get", data: null }).then(
         ([status, result]) => {
           if (status !== 200) {
@@ -138,7 +138,7 @@ const HotelProfilePage = (user: any) => {
                                         </div>
                                         <div className="stat-top-wrapper">
                                                 <p className="stat-title">Total Branches on Uncover</p>
-                                                <p className="stat-total"> {currentHotel && currentHotel["business-stats"]?.[0]?.total_branches} </p>
+                                                <p className="stat-total"> {currentHotel && currentHotel["business-stats"]?.[0]?.total_branches || ' NN'} </p>
                                         </div>
                                     </div>
                             </div>
@@ -149,7 +149,7 @@ const HotelProfilePage = (user: any) => {
                                         </div>
                                         <div className="stat-top-wrapper">
                                                 <p className="stat-title">Total rooms on Uncover</p>
-                                                <p className="stat-total">{currentHotel && currentHotel["business-stats"]?.[0]?.available_rooms}</p>
+                                                <p className="stat-total">{currentHotel && currentHotel["business-stats"]?.[0]?.available_rooms || ' NN '}</p>
                                         </div>
                                     </div>
                             </div>
@@ -160,7 +160,7 @@ const HotelProfilePage = (user: any) => {
                                         </div>
                                         <div className="stat-top-wrapper">
                                                 <p className="stat-title">Views on Uncover</p>
-                                                <p className="stat-total">{currentHotel && currentHotel["business-stats"]?.[0]?.profile_views}</p>
+                                                <p className="stat-total">{currentHotel && currentHotel["business-stats"]?.[0]?.profile_views || ' NN '}</p>
                                         </div>
                                     </div>
                             </div>
@@ -171,7 +171,7 @@ const HotelProfilePage = (user: any) => {
                                         </div>
                                         <div className="stat-top-wrapper">
                                                 <p className="stat-title">Bookings on Uncover</p>
-                                                <p className="stat-total">{currentHotel && currentHotel["business-stats"]?.[0]?.total_booking}</p>
+                                                <p className="stat-total">{currentHotel && currentHotel["business-stats"]?.[0]?.total_booking || " NN"}</p>
                                         </div>
                                     </div>
                             </div>
@@ -315,7 +315,6 @@ const HotelProfilePage = (user: any) => {
                                    </div>
                                     
                                 </Profile>
-                              
                                 
                             </div>
                             <div className="col-lg-6">
@@ -330,7 +329,7 @@ const HotelProfilePage = (user: any) => {
                                    {currentHotel && currentHotel?.["user-business-access"]?.map( (adminUser : any) => {
                                     return ( 
                                     <div className="profile-wrapper">
-                                        <div className="item-photo"></div>
+                                        <div className="item-photo"> </div>
                                             <div className="item-datails">
                                                 <h6>{ adminUser.user} </h6>
                                                 <p>{adminUser.contact}</p>
@@ -338,6 +337,7 @@ const HotelProfilePage = (user: any) => {
                                                      return role.role;   
                                                 })}</p>
                                             </div>
+                                            <div className=" button_wrapper" > <button className="remove_button" > <TiDelete /> </button> </div>
                                         </div> )
                                    })}
                                    
@@ -364,22 +364,26 @@ const HotelProfilePage = (user: any) => {
                                     <div className="profile-header">
                                         <p>Branches</p>
                                         <div className="profile-controls">
-                                           <a href="#"><i className="fa fa-edit"></i> Add</a>
+                                        <a href="#" onClick={ () => setShowHotelBranchModal(true)} ><i className="fa fa-edit"></i> Add</a>
                                         </div>
                                     </div>
                                    <hr></hr>
-                                   <div className="profile-wrapper">                                    
+                                                                      
                                     {currentHotel && currentHotel["business-branch"].map((branch:any) => {
                                       return (<>
-                                             <div className="item-photo"></div>
+                                      <div className="profile-wrapper"> 
+                                             <div className="item-photo"> </div>
                                              <div className="item-datails">
                                                 <h6>{branch.branch_name}</h6>
                                                 <p>{branch.description}</p> 
                                              </div>
+                                             
+                                             <div className=" button_wrapper" > <button className="remove_button" > <TiDelete color="#B80025" /> </button> </div>
+                                             </div>
                                          </>)
-                                         })
+                                         } )
                                      }
-                                   </div>
+                                   
                                 </Profile>
 
                                 <Profile>
@@ -401,7 +405,7 @@ const HotelProfilePage = (user: any) => {
                 </div>
             </div>
         <CustomModalPane show={showUsersModel}
-           title = " Create Users"
+           title = " Add Manager "
            target = "create-users"
            hideThisModal={() => setShowUsersModal(false)}
            >
@@ -433,6 +437,17 @@ const HotelProfilePage = (user: any) => {
             <HouseRulesForm 
                 setShowModal={showHouseRulesModal}
                 submitTitle=" Add House Rule"
+                />
+        </CustomModalPane>
+     <CustomModalPane show={showHotelBranchModal}
+           title = " Create Hotel Branch"
+           target = "create-house-rule"
+           hideThisModal={() => setShowHotelBranchModal(false)}
+           >
+            { message && <div className={classname}>{message}</div> }
+            <BusinessBranchesForm 
+                setShowModal={showHotelBranchModal}
+                submitTitle=" Add Branch"
                 />
         </CustomModalPane>
 
@@ -584,6 +599,27 @@ const Profile = styled.div`{
             min-height: 150px;
         }
     }
+    .button_wrapper {
+        position: absolute;
+        right:40px;
+
+
+    }
+    .remove_button:hover{
+        margin-left : 10px;
+        outline:none;
+        margin-left:20px;
+        padding:3px 7px;
+        cursor : hand;
+        color : #4F0403;
+      }
+      .remove_button {
+        margin-left : 10px;
+        border:none;
+        outline:none;
+        background-color : #fff;
+        color : #F50400;
+      }
     `
 
 export default HotelProfilePage;

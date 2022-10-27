@@ -16,24 +16,40 @@ const BusinessBranchesForm = (props : Props) => {
     const schema = {
         business_id : {
             type: 'db_select',
-            label : 'Business / Hotel',
+            label : 'Select Hotel or Business',
             model : 'business',
             model_display_col : ['name'],
             placeholder : 'Select Busines or Hotel ',
             required : true
          },
-         narration : {
-            type: 'textarea',
-            label : 'Text ',
-            placeholder : 'Type the rule here',
+         main_branch : {
+            type: 'select',
+            label : ' Main Branch? ',
+            options : [
+                {value:1, label:'YES'},
+                {value:0, label:'NO'}
+            ],
+            placeholder : 'Is it the main Branch? ',
             required : true
          },
+         branch_name : {
+            type: 'text',
+            label : ' Name ',
+            placeholder : 'Enter name of the branch',
+            required : true
+         },
+         description : {
+            type: 'textarea',
+            label : ' Description',
+            placeholder : ' Short Description of the Hotel',
+            required : true,
+         }
 
     }
       
     const [usersFormSchema, setUsersFormSchema] = useState(schema);
-    const [label, setLabel] = useState("Create User");  
-    const [endpoint, setEndpoint] = useState("/house-rules/create");
+    const [label, setLabel] = useState("Create Branch");  
+    const [endpoint, setEndpoint] = useState("/business-branch/create");
  
     return(
         <FormWrapper>

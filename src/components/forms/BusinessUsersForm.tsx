@@ -16,17 +16,17 @@ const BusinessUsersForm = (props : Props) => {
     const schema = {
         user_id : {
             type: 'db_select',
-            label : 'Select Hotel on Magniva',
-            model : 'business',
-            model_display_col : ['name'],
+            label : 'Select User on Magniva',
+            model : 'users',
+            model_display_col : ['username'],
             placeholder : 'Select Busines or Hotel ',
             required : true
          },
          business_id : {
             type: 'db_select',
-            label : ' Choose User From List',
-            model : 'users',
-            model_display_col : ['username'],
+            label : ' Choose Hotel From List',
+            model : 'business',
+            model_display_col : ['name'],
             placeholder : 'Select Hotel to Add a Manager ',
             required : true
          },

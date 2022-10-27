@@ -23,7 +23,7 @@ const HouseRulesForm = (props : Props) => {
             required : true
          },
          narration : {
-            type: 'textarea',
+            type: 'text',
             label : 'Text ',
             placeholder : 'Type the rule here',
             required : true
@@ -33,7 +33,7 @@ const HouseRulesForm = (props : Props) => {
     }
       
     const [usersFormSchema, setUsersFormSchema] = useState(schema);
-    const [label, setLabel] = useState("Create User");  
+    const [label, setLabel] = useState("Create House Rule");  
     const [endpoint, setEndpoint] = useState("/house-rules/create");
  
     return(
