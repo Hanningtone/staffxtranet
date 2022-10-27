@@ -14,7 +14,7 @@ const HotelPhotoForm = (props: Props) => {
     const navigate = useNavigate();
     const [error, setError] = useState();
     const submitLabel = "Create Hotel";
-    const endpoint = '/business-photos/create';
+    const endpoint = '/business-photos/upload';
     const { id } = useParams();
     
     const schema = {
@@ -27,6 +27,11 @@ const HotelPhotoForm = (props: Props) => {
          business_id: {
             value: id,
             type:"hidden",
+        },
+        description: {
+            label: "Describe Your Photos",
+            type:"textarea",
+            placeholder: "Describe Here"
         },
         room_type_id: {
             label: "Room Type",
@@ -42,7 +47,7 @@ const HotelPhotoForm = (props: Props) => {
 
     return(
         <FormWrapper>
-           {LoadForm(schema, submitLabel, endpoint)}
+           {LoadForm(schema, submitLabel, endpoint, "multipart/form-data")}
            
         </FormWrapper>
     )

@@ -30,7 +30,6 @@ const AnyReactComponent = ({ text }: any) =>
 const HotelProfilePage = (user: any) => {
     const [showModal, setShowModal] = useState(false);
     const [error, setError] = useState<any>();
-    const { id } = useParams();
     const [showHotelsModal, setShowHotelsModal] = useState(false);
     const [showUsersModel, setShowUsersModal] = useState(false);
     const [showHouseRulesModal, setShowHouseRuelsMOdal] = useState(false);
@@ -39,6 +38,7 @@ const HotelProfilePage = (user: any) => {
     const [message, setMessage] = useState();
     const [currentHotel, setCurrentHotel] = useState<any>();
     const [showPhotoModal, setShowPhotoModal] = useState(false);
+    const {id} = useParams();
    
 
 
@@ -63,12 +63,12 @@ const HotelProfilePage = (user: any) => {
     }, [state?.eventspage])
 
 
-    const fetchHotelDetials = (id:number) => {
+    const fetchHotelDetials = () => {
 
-      let _url = "/business/detail/2?with=house-rules@business_id,"
+      let _url = "/business/detail/"+id+"?with=house-rules@business_id,"
          + "user-business-access@business_id,business-branch@business_id,"
-         + "business-branch@business_id,business-photos@business_id,"
-         + "room-amenities@business_id,room-perks@business_id,"
+         + "business-branch@business_id,business-photos@business_id," +
+         "room-amenities@business_id,room-perks@business_id,"
          + "business-stats@business_id,customer_reviews@business_id";
       
   
@@ -86,8 +86,7 @@ const HotelProfilePage = (user: any) => {
     }
 
     useEffect(()=> {
-        let h_id = Number(id);
-        fetchHotelDetials(h_id);
+        fetchHotelDetials();
 
     }, [])
     const defaultProps = {
@@ -257,7 +256,7 @@ const HotelProfilePage = (user: any) => {
                                     <div className="profile-photo-wrapper">
                                      
                                       { currentHotel && currentHotel["business-photos"]?.map((photo:any) => {
-                                          return (<div className="profile-photo"><img src={photo.url_path} alt="" /></div>)
+                                          return (<div className="profile-photo business-photo"><img src={photo.url_path} alt="" /></div>)
                                         })
                                       }
                                     </div>  

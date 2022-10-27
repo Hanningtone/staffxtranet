@@ -22,9 +22,10 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 export const Form = (props) => {
+    const {enctype, ...rest } = props;
     return (
-        <Formik {...props} >
-            <FormikForm className="needs-validation" noValidate="">
+        <Formik {...rest} >
+            <FormikForm className="needs-validation" noValidate="" encType={enctype}>
                 {props.children}
             </FormikForm >
         </Formik>
@@ -568,7 +569,8 @@ export const getFormElement = (elementName, elementSchema) => {
     }
 };
 
-export const LoadForm = (formSchema, submitLabel, endpoint) => {
+export const LoadForm = (formSchema, submitLabel, endpoint, 
+    enctype=null) => {
    
    const {formData, validationSchema} = initForm(formSchema);
    
@@ -577,12 +579,12 @@ export const LoadForm = (formSchema, submitLabel, endpoint) => {
    const [isError, setIsError] = useState();
 
 
-
    const onSubmit = (values, { setSubmitting,  resetForm, setStatus, setErrors}) => {
-    console.log("Calling on submit funtion")
+    console.log("Calling on submit funtion wih encytype", enctype);
        setIsError(null);
        console.log("Sumnitting values", values);
-       makeRequest({url:endpoint, method:"post", data:values}).then(([status, result]) => {
+
+       makeRequest({url:endpoint, method:"post", data:values, enctype:enctype}).then(([status, result]) => {
            console.log("Result is ", result, "status is ", status);
            if(status > 299){
                 setIsError(true);
@@ -596,11 +598,14 @@ export const LoadForm = (formSchema, submitLabel, endpoint) => {
                    setResponseMessage("A validation Error occurred. Please Contact Admin")
 
                } else {
-                   setResponseMessage("An error occurred while attempting to submit. Please try again");
+                    setIsError(true);
+
+                   setResponseMessage("Sorry, An internal error occurred. Please contact admin");
                }
            } else {
                 setIsError(false);
                 setResponseMessage(result.message);
+
                 resetForm();
                 dispatch({type:"SET", key:"page", payload: state?.page == 1 ? 1: 0});
                 //result
@@ -615,7 +620,10 @@ export const LoadForm = (formSchema, submitLabel, endpoint) => {
         enableReinitialize={true}
         initialValues={formData}
         validationSchema={validationSchema}
-        onSubmit={onSubmit} >
+        onSubmit={onSubmit} 
+        enctype = {enctype}
+
+        >
         { responseMessage && <div className={isError ? "alert alert-danger" : "alert alert-success"}>
                 {responseMessage}
                </div>
