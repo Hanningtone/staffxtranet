@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import styled from "styled-components";
 import { useForm } from "react-hook-form";
 import {LoadForm } from "../../utils/form";
 import {useNavigate} from 'react-router-dom';
- 
 
 interface Props {
     setShowModal: any
@@ -15,6 +14,7 @@ const HotelForm = (props: Props) => {
     const [error, setError] = useState();
     const submitLabel = "Create Hotel";
     const endpoint = '/business/create';
+    
     const schema = {
        name: {
             required:"required",
@@ -23,7 +23,7 @@ const HotelForm = (props: Props) => {
             type:"text",
             placeholder:"Enter hotel name"
         },
-        market: {
+        market_id: {
             label: "Market",
             value: "",
             type:"db_select",
@@ -32,11 +32,11 @@ const HotelForm = (props: Props) => {
             model_display_col:['market_name'],
             placeholder:"Select Market"
         },
-         category: {
+         category_id: {
             label: "Category",
             value: "",
             type:"db_select",
-            model:"category",
+            model:"business-categories",
             options:[],
             model_display_col:['category_name'],
             placeholder:"Select Category"
@@ -47,15 +47,18 @@ const HotelForm = (props: Props) => {
             type:"places",
             placeholder:"Start typing location..."
         },
+         ranking: {
+            value: "0",
+            type:"hidden",
+        },
 
     }
-
 
     return(
         <FormWrapper>
         <h3 className="form-title plain">Create New Hotel</h3>
            {LoadForm(schema, submitLabel, endpoint)}
-           <button class="btn btn-danger" onClick={()=>props.setShowModal()} style={{
+           <button className="btn btn-danger" onClick={()=>props.setShowModal()} style={{
     float: "right", marginTop:-30}}>Cancel</button>
         </FormWrapper>
     )

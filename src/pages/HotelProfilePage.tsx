@@ -13,6 +13,7 @@ import makeRequest from "../utils/fetch-request";
 import BusinessUsersForm from "../components/forms/BusinessUsersForm";
 import CustomModalPane from "../utils/_modal";
 import HouseRulesForm from "../components/forms/HouseRulesForm";
+import HotelPhotoForm from "../components/forms/HotelPhotoForm";
 
 
 
@@ -27,7 +28,7 @@ const AnyReactComponent = ({ text }: any) =>
     
 
 const HotelProfilePage = (user: any) => {
-
+    const [showModal, setShowModal] = useState(false);
     const [error, setError] = useState<any>();
     const { id } = useParams();
     const [showHotelsModal, setShowHotelsModal] = useState(false);
@@ -37,6 +38,7 @@ const HotelProfilePage = (user: any) => {
     const [classname, setClassname] = useState('success');
     const [message, setMessage] = useState();
     const [currentHotel, setCurrentHotel] = useState<any>();
+    const [showPhotoModal, setShowPhotoModal] = useState(false);
    
 
 
@@ -116,6 +118,15 @@ const HotelProfilePage = (user: any) => {
     };
     
      const initialSelectedIndex = options.findIndex(({value}) => value === "bar");
+
+    const showModalForm = (show : any, 
+      title='Create Event', 
+      submitTitle='Create Record') =>{
+      setModalTitle(title);
+      setSubmitTitle(submitTitle);
+      setShowModal(show);
+    }
+
 
     return (
         <AdminLayout showSideMenu={true}  user={user}>
@@ -237,9 +248,11 @@ const HotelProfilePage = (user: any) => {
                                     <div className="profile-header">
                                         <p>Photos</p>
                                         <div className="profile-controls">
-                                           <a href="#"><i className="fa fa-edit"></i> Add Photo</a>
+                                           <a href="#" onClick = {()=>setShowPhotoModal(true)}><i className="fa fa-edit"></i> Add Photo</a>
+                                           
                                         </div>
                                     </div>
+
                                    <hr></hr>
                                     <div className="profile-photo-wrapper">
                                      
@@ -424,16 +437,18 @@ const HotelProfilePage = (user: any) => {
                 />
         </CustomModalPane>
 
-        <CustomModalPane show={showHouseRulesModal}
-           title = " Create House Rule"
-           target = "create-house-rule"
-           hideThisModal={() => setShowHouseRuelsMOdal(false)}
+        <CustomModalPane show={showPhotoModal}
+           title = " Add New Photo"
+           hideThisModal={() => setShowPhotoModal(false)}
            >
             { message && <div className={classname}>{message}</div> }
-            <HouseRulesForm 
-                setShowModal={showHouseRulesModal}
-                submitTitle=" Add House Rule"
+            <HotelPhotoForm 
+                setShowModal={showPhotoModal}
+
                 />
+                <button className="btn btn-danger" onClick={()=>setShowPhotoModal(false)} style={{
+    float: "right", marginTop:-30}}>Cancel</button>
+
         </CustomModalPane>
 
 
