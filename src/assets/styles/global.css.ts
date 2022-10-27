@@ -23,6 +23,10 @@ export default createGlobalStyle`
      }
      
  }
+ .business-photo {
+    width: 100%;
+    overflow: hidden;
+ }
   .login-page {
     margin: 0;
     padding: 0;

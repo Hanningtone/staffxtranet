@@ -110,6 +110,10 @@ const HotelsPage = (user: any) => {
     useEffect(() => {
       fetchEvents();
     }, []);
+
+     useEffect(() => {
+      fetchEvents();
+    }, [state?.page]);
     
     const navigateToConfirmed= (eachHotel : any) =>{
         navigate(`/hotel-profile/${eachHotel.id}`, { state: eachHotel}); // here we will redirect user and send your data into state

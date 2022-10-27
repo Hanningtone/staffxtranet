@@ -15,6 +15,8 @@ import CustomModalPane from "../utils/_modal";
 import HouseRulesForm from "../components/forms/HouseRulesForm";
 import BusinessBranchesForm from "../components/forms/BusinessBranchesForm";
 import { TiDelete } from 'react-icons/ti'
+import HotelPhotoForm from "../components/forms/HotelPhotoForm";
+
 
 
 const AnyReactComponent = ({ text }: any) => 
@@ -28,16 +30,18 @@ const AnyReactComponent = ({ text }: any) =>
     
 
 const HotelProfilePage = (user: any) => {
-
+    const [showModal, setShowModal] = useState(false);
     const [error, setError] = useState<any>();
-    const { id } = useParams();
     const [showHotelBranchModal, setShowHotelBranchModal] = useState(false);
+    const [showHotelsModal, setShowHotelsModal] = useState(false);
     const [showUsersModel, setShowUsersModal] = useState(false);
     const [showHouseRulesModal, setShowHouseRuelsMOdal] = useState(false);
     const [state, dispatch] = useContext(Context)
     const [classname, setClassname] = useState('success');
     const [message, setMessage] = useState();
     const [currentHotel, setCurrentHotel] = useState<any>();
+    const [showPhotoModal, setShowPhotoModal] = useState(false);
+    const {id} = useParams();
    
 
 
@@ -62,12 +66,12 @@ const HotelProfilePage = (user: any) => {
     }, [state?.eventspage])
 
 
-    const fetchHotelDetials = (id:number) => {
+    const fetchHotelDetials = () => {
 
-      let _url = "/business/detail/1?with=house-rules@business_id,"
+      let _url = "/business/detail/"+id+"?with=house-rules@business_id,"
          + "user-business-access@business_id,business-branch@business_id,"
-         + "business-branch@business_id,business-photos@business_id,"
-         + "room-amenities@business_id,room-perks@business_id,"
+         + "business-branch@business_id,business-photos@business_id," +
+         "room-amenities@business_id,room-perks@business_id,"
          + "business-stats@business_id,customer_reviews@business_id";
 
       makeRequest({ url: _url, method: "get", data: null }).then(
@@ -84,8 +88,7 @@ const HotelProfilePage = (user: any) => {
     }
 
     useEffect(()=> {
-        let h_id = Number(id);
-        fetchHotelDetials(h_id);
+        fetchHotelDetials();
 
     }, [])
     const defaultProps = {
@@ -116,6 +119,15 @@ const HotelProfilePage = (user: any) => {
     };
     
      const initialSelectedIndex = options.findIndex(({value}) => value === "bar");
+
+    const showModalForm = (show : any, 
+      title='Create Event', 
+      submitTitle='Create Record') =>{
+      setModalTitle(title);
+      setSubmitTitle(submitTitle);
+      setShowModal(show);
+    }
+
 
     return (
         <AdminLayout showSideMenu={true}  user={user}>
@@ -237,14 +249,16 @@ const HotelProfilePage = (user: any) => {
                                     <div className="profile-header">
                                         <p>Photos</p>
                                         <div className="profile-controls">
-                                           <a href="#"><i className="fa fa-edit"></i> Add Photo</a>
+                                           <a href="#" onClick = {()=>setShowPhotoModal(true)}><i className="fa fa-edit"></i> Add Photo</a>
+                                           
                                         </div>
                                     </div>
+
                                    <hr></hr>
                                     <div className="profile-photo-wrapper">
                                      
                                       { currentHotel && currentHotel["business-photos"]?.map((photo:any) => {
-                                          return (<div className="profile-photo"><img src={photo.url_path} alt="" /></div>)
+                                          return (<div className="profile-photo business-photo"><img src={photo.url_path} alt="" /></div>)
                                         })
                                       }
                                     </div>  
@@ -428,16 +442,18 @@ const HotelProfilePage = (user: any) => {
                 />
         </CustomModalPane>
 
-        <CustomModalPane show={showHouseRulesModal}
-           title = " Create House Rule"
-           target = "create-house-rule"
-           hideThisModal={() => setShowHouseRuelsMOdal(false)}
+        <CustomModalPane show={showPhotoModal}
+           title = " Add New Photo"
+           hideThisModal={() => setShowPhotoModal(false)}
            >
             { message && <div className={classname}>{message}</div> }
-            <HouseRulesForm 
-                setShowModal={showHouseRulesModal}
-                submitTitle=" Add House Rule"
+            <HotelPhotoForm 
+                setShowModal={showPhotoModal}
+
                 />
+                <button className="btn btn-danger" onClick={()=>setShowPhotoModal(false)} style={{
+    float: "right", marginTop:-30}}>Cancel</button>
+
         </CustomModalPane>
      <CustomModalPane show={showHotelBranchModal}
            title = " Create Hotel Branch"

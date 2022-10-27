@@ -1,4 +1,6 @@
 import React, { useEffect, useState,useContext,useRef } from 'react';
+import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
+import { geocodeByAddress, getLatLng } from 'react-google-places-autocomplete';
 import * as Yup from 'yup';
 import makeRequest from "./fetch-request";
 import { Context }  from '../context';
@@ -20,9 +22,10 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 export const Form = (props) => {
+    const {enctype, ...rest } = props;
     return (
-        <Formik {...props} >
-            <FormikForm className="needs-validation" noValidate="">
+        <Formik {...rest} >
+            <FormikForm className="needs-validation" noValidate="" encType={enctype}>
                 {props.children}
             </FormikForm >
         </Formik>
@@ -91,10 +94,98 @@ export const HiddenField = (props)  => {
     );
 };
 
+export const MultipleFileUploadField = (props)  => {
+    const MAX_COUNT = 10;
+    const { name,  label, value, accept} = props;
+    const { setFieldValue } = useFormikContext(); 
+    const [warnMessage, setWarnMessage] = useState();
+
+    const [uploadedFiles, setUploadedFiles] = useState([])
+    const [fileLimit, setFileLimit] = useState(false);
+
+    const handleUploadFiles = files => {
+        const uploaded = [...uploadedFiles];
+        let limitExceeded = false;
+        files.some((file) => {
+            if (uploaded.findIndex((f) => f.name === file.name) === -1) {
+                uploaded.push(file);
+                if (uploaded.length === MAX_COUNT) setFileLimit(true);
+                if (uploaded.length > MAX_COUNT) {
+                    setWarnMessage(`You can only add a maximum of ${MAX_COUNT} files`);
+                    setFileLimit(false);
+                    limitExceeded = true;
+                    return true;
+                }
+            }
+        })
+        if (!limitExceeded) { 
+            setUploadedFiles(uploaded);
+            setFieldValue(name, uploaded);
+        }
+
+    }
+
+    const callOnChangeFunction = (e) => {
+        const chosenFiles = Array.prototype.slice.call(e.target.files)
+        handleUploadFiles(chosenFiles);
+    }
+
+    const removeUploadedFile = (file) => {
+        let chosenFiles = uploadedFiles.filter((f) =>  f.name !== file.name );
+        setUploadedFiles(chosenFiles);
+    }
+
+    let inputProps={
+        id: name,
+        name: name,
+        multiple:true,
+        accept:accept,
+        className:"form-control",
+        onChange: e => callOnChangeFunction(e),
+    }
+
+    return (
+        <div className="form-group" >
+            {label && <label htmlFor={name} className="form-control-label">{label}</label>}
+            <input
+                type="file"
+                { ...inputProps }
+            />
+            <div className="uploaded-files-list" style={{marginTop:"10px"}}>
+                {uploadedFiles.map(file => (
+                    <div  style={{display:"inline-block", marginRight:"5px", position:"relative"}}>
+                        <img style={{height: "30px"}} id={file.name} src={URL.createObjectURL(file)} alt="" />
+                        <div style={{fontSize:"7px"}}>{file.name} </div>
+                        <div 
+                           style={{
+                            position:"absolute", 
+                            color:"red", 
+                            fontSize:"8px", 
+                            top:0, 
+                            right:0,
+                            background:"#fff",
+                            textAlign:"center",
+                            padding:"0px 2px",
+                            border:"1px solid #eee",
+                            borderRadius:"2px",
+                            cursor:"pointer",
+                            display:"block",
+
+                        }} 
+                        onClick={() => removeUploadedFile(file)}> X </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
+
+
 export const FileUploadField = (props)  => {
     const { name,  label, value, onChangeFunction } = props;
     const [field, , { setValue }] = useField(props);
-     const { setFieldValue } = useFormikContext(); 
+
+    const { setFieldValue } = useFormikContext(); 
     const [customData, setCustomData] = useState()
    
     const setFileFiledData = (data) =>{
@@ -179,23 +270,42 @@ export const TextField = (props)  => {
 export const PlaceSelector = (props) => {
  const { name, label, placeholder } = props;
 
- const autoCompleteRef = useRef();
- const inputRef = useRef();
- const options = {
-      types: ["establishment"],
-      componentRestrictions: { country: "ke" }
- };
- useEffect(() => {
-      autoCompleteRef.current = new window.google.maps.places.Autocomplete(
-       inputRef.current,
-       options
-      );
- }, []);
+ const [value, setValue] = useState(null);
+ const { setFieldValue } = useFormikContext(); 
+
+ const setFormFieldValue = (value) => {
+     console.log("Setting location to ", value);
+     let location = {
+        name: value.value.description
+    }
+    geocodeByAddress(location.name)
+      .then(results => getLatLng(results[0]))
+      .then(({ lat, lng }) => {
+            location = {                                                            
+             ...location, lat: lat, lng:lng                                               
+             } 
+             setFieldValue(name, JSON.stringify(location));
+      });
+
+     setValue(value)
+ }
+
+
  return (
         <div className="form-group">
             {label && <label htmlFor={name} className="form-control-label">{label}</label>}
-            <input  id={name} className="form-control" name={name}  placeholder={placeholder} ref={inputRef} />
-           
+
+             <GooglePlacesAutocomplete
+                  name={name}
+                  placeholder={placeholder}
+                  apiOptions={{language:"en", region:"ke"}}
+                  autocompletionRequest = {{
+                    componentRestrictions: { country: ['ke'], }
+                   }}
+                   selectProps={{ value,onChange: setFormFieldValue,}}
+
+                  apiKey="AIzaSyBeo35IlDz0_a8z249o1zcR1p93roxMPA4"
+                />
             <ErrorMessage name={name} render={msg => <div style={{ color: 'red' }} ><small>{msg}</small></div>} />
         </div>
       
@@ -386,6 +496,11 @@ export const getFormElement = (elementName, elementSchema) => {
        props.onChangeFunction = elementSchema.onChangeFunction;
     }
 
+    if(elementSchema?.accept){
+       props.accept = elementSchema.accept;
+    }
+
+
     //optional props
     if(elementSchema.options && ['select', 'db_select', 'radio'].includes(elementSchema.type) ){
         props.options = elementSchema.options;
@@ -446,35 +561,54 @@ export const getFormElement = (elementName, elementSchema) => {
     if (elementSchema.type === "fileupload") {
         return <FileUploadField  {...props} />
     }
+    if (elementSchema.type === "multiplefileupload") {
+        return <MultipleFileUploadField  {...props} />
+    }
     if (elementSchema.type === "places") {
         return <PlaceSelector  {...props} />
     }
 };
 
-export const LoadForm = (formSchema, submitLabel, endpoint) => {
+export const LoadForm = (formSchema, submitLabel, endpoint, 
+    enctype=null) => {
    
    const {formData, validationSchema} = initForm(formSchema);
    
    const [ state, dispatch ] =  useContext(Context);
+   const [responseMessage, setResponseMessage] = useState();
+   const [isError, setIsError] = useState();
+
 
    const onSubmit = (values, { setSubmitting,  resetForm, setStatus, setErrors}) => {
-       makeRequest({url:endpoint, method:"post", data:values}).then(([status, result]) => {
+    console.log("Calling on submit funtion wih encytype", enctype);
+       setIsError(null);
+       console.log("Sumnitting values", values);
+
+       makeRequest({url:endpoint, method:"post", data:values, enctype:enctype}).then(([status, result]) => {
            console.log("Result is ", result, "status is ", status);
            if(status > 299){
+                setIsError(true);
                if(status < 500) { 
                    const field_errors = {};
                    Object.entries(result?.data).forEach( ([key, value]) =>  {
                        field_errors[key] = value[0];
                    });
                    setErrors(field_errors);
-                   dispatch({type:"SET", key:state?.context, payload:{"status":false, "message":result.message}});
+
+                   setResponseMessage("A validation Error occurred. Please Contact Admin")
+
                } else {
-                   dispatch({type:"SET", key:state?.context, payload:{"status":false, "message":"Internal server error"}});
+                    setIsError(true);
+
+                   setResponseMessage("Sorry, An internal error occurred. Please contact admin");
                }
            } else {
-               console.log("Dispatching state", state?.context,{"status":true, message:result.message, data:result} )
-               dispatch({type:"SET", key:state?.context, payload:{"status":true, message:result.message, data:result}});
-               dispatch({type:"SET", key:"page", payload:state?.page === 0 ? 1: 0 });
+                setIsError(false);
+                setResponseMessage(result.message);
+
+                resetForm();
+                dispatch({type:"SET", key:"page", payload: state?.page == 1 ? 1: 0});
+                //result
            } 
            setSubmitting(false);
        });
@@ -486,13 +620,20 @@ export const LoadForm = (formSchema, submitLabel, endpoint) => {
         enableReinitialize={true}
         initialValues={formData}
         validationSchema={validationSchema}
-        onSubmit={onSubmit} >
+        onSubmit={onSubmit} 
+        enctype = {enctype}
+
+        >
+        { responseMessage && <div className={isError ? "alert alert-danger" : "alert alert-success"}>
+                {responseMessage}
+               </div>
+           }
         {Object.keys(formSchema).map( (key, ind) => (
             <div key={key}>
                 {getFormElement(key, formSchema[key])}
             </div>
         ))}
-        <SubmitButton className="btn btn-primary" title={submitLabel} />
+        <SubmitButton key="k-submit-f" className="btn btn-primary" title={submitLabel} />
      </Form> 
    );
 };
