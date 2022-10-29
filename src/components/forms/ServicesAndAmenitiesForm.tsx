@@ -9,27 +9,33 @@ interface Props {
     setShowModal: any
 }
 
-const HotelPhotoForm = (props: Props) => {
+const ServicesAndAmenitiesForm = (props: Props) => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const [error, setError] = useState();
-    const submitLabel = "Add Photos";
-    const endpoint = '/business-photos/upload';
+    const submitLabel = "Create Service";
+    const endpoint = '/room-amenities/create';
     const { id } = useParams();
     
     const schema = {
-       url_path: {
-            label: "Click To Add",
-            type:"multiplefileupload",
-            accept:"image/*"
-        },
-        
-         business_id: {
+        business_id: {
             value: id,
             type:"hidden",
         },
-
+        name: {
+            label: "Service/Amenity",
+            type:"text",
+            required:"Required",
+            placeholder: "Enter A service or amenity",
+        },
+        description: {
+            label: "Description",
+            type:"textarea",
+            placeholder: "Briefly describe the service/amenity",
+        },
         
+        
+
     }
 
     return(
@@ -42,4 +48,4 @@ const HotelPhotoForm = (props: Props) => {
 
 const FormWrapper = styled.div`
 `
-export default HotelPhotoForm;
+export default ServicesAndAmenitiesForm;

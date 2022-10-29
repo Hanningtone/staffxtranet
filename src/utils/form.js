@@ -154,8 +154,8 @@ export const MultipleFileUploadField = (props)  => {
             <div className="uploaded-files-list" style={{marginTop:"10px"}}>
                 {uploadedFiles.map(file => (
                     <div  style={{display:"inline-block", marginRight:"5px", position:"relative"}}>
-                        <img style={{height: "30px"}} id={file.name} src={URL.createObjectURL(file)} alt="" />
-                        <div style={{fontSize:"7px"}}>{file.name} </div>
+                        <img style={{height: "50px"}} id={file.name} src={URL.createObjectURL(file)} alt="" />
+                        <div style={{fontSize:"10px"}}>{file.name} </div>
                         <div 
                            style={{
                             position:"absolute", 

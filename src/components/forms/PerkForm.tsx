@@ -13,7 +13,7 @@ const PerkForm = (props: Props) => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const [error, setError] = useState();
-    const submitLabel = "Create Hotel";
+    const submitLabel = "Create Perk";
     const endpoint = '/room-perks/create';
     const { id } = useParams();
     

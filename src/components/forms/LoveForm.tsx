@@ -9,27 +9,27 @@ interface Props {
     setShowModal: any
 }
 
-const HotelPhotoForm = (props: Props) => {
+const LoveForm = (props: Props) => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const [error, setError] = useState();
-    const submitLabel = "Add Photos";
-    const endpoint = '/business-photos/upload';
+    const submitLabel = "Create Narration";
+    const endpoint = '/whyweloveit/create';
     const { id } = useParams();
     
     const schema = {
-       url_path: {
-            label: "Click To Add",
-            type:"multiplefileupload",
-            accept:"image/*"
-        },
-        
-         business_id: {
+        business_id: {
             value: id,
             type:"hidden",
         },
-
+        narration: {
+            label: "Narration",
+            type:"textarea",
+            placeholder: "Briefly narrate why we we love it",
+        },
         
+        
+
     }
 
     return(
@@ -42,4 +42,4 @@ const HotelPhotoForm = (props: Props) => {
 
 const FormWrapper = styled.div`
 `
-export default HotelPhotoForm;
+export default LoveForm;
