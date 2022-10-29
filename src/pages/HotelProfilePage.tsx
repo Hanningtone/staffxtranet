@@ -38,7 +38,7 @@ const HotelProfilePage = (user: any) => {
     const [showHotelsModal, setShowHotelsModal] = useState(false);
     const [showUsersModel, setShowUsersModal] = useState(false);
     const [showHouseRulesModal, setShowHouseRuelsMOdal] = useState(false);
-    const [state, dispatch] = useContext(Context)
+    const [state, dispatch] = useContext<any>(Context)
     const [classname, setClassname] = useState('success');
     const [message, setMessage] = useState();
     const [currentHotel, setCurrentHotel] = useState<any>();

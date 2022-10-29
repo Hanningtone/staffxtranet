@@ -20,7 +20,7 @@ const HotelsPage = (user: any) => {
 
     const [showModal, setShowModal] = useState(false);
     const [token, setToken] = useState();
-    const [state, dispatch] = useContext(Context);
+    const [state, dispatch] = useContext<any>(Context);
     const [clasname, setClassname] = useState('success');
     const [message, setMessage] = useState();
     const [modalTitle, setModalTitle] = useState(" Create Hotel");
@@ -40,8 +40,8 @@ const HotelsPage = (user: any) => {
   
     useEffect(() => {
       if(state?.context){
-        let status = state[state.context].status;
-        let message = state[state.context].message;
+        let status = state[state.context]?.status;
+        let message = state[state.context]?.message;
         let data = state[state.context]?.data || {};
   
         if(status === true){
