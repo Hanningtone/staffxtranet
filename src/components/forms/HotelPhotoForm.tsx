@@ -28,21 +28,8 @@ const HotelPhotoForm = (props: Props) => {
             value: id,
             type:"hidden",
         },
-        description: {
-            label: "Describe Your Photos",
-            type:"textarea",
-            placeholder: "Describe Here"
-        },
-        room_type_id: {
-            label: "Room Type",
-            value: "",
-            type:"db_select",
-            model:"room-types",
-            options:[],
-            model_display_col:['title'],
-            placeholder:"Select Room Type"
-        },
 
+        
     }
 
     return(
