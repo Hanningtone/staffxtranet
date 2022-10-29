@@ -20,7 +20,7 @@ const HotelsForm = (props: Props) => {
     const schema = {
         business_id : {
             type: 'db_select',
-            label : ' Branch ',
+            label : ' Select ',
             model : 'business-categories',
             model_display_col : ['branch'],
             placeholder : 'Choose Branch',
