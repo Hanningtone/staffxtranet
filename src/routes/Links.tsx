@@ -1,5 +1,5 @@
 import {useState, useContext, useEffect} from "react";
-import {BrowserRouter as Router, Route,Routes } from 'react-router-dom';
+import {BrowserRouter as Router, Route,Routes, useNavigate } from 'react-router-dom';
 import { 
   LoginPage,
   HomePage,
@@ -19,7 +19,22 @@ import {
 import ProtectedRoute from './ProtectedRoutes';
 import { Context } from "../context";
 import { setLocalStorage, getFromLocalStorage, removeItem } from '../utils/local-storage';
+import Store from '../context';
 
+
+const Logout = () => {
+    let navigate = useNavigate();
+
+    const out = useCallback(() => {
+        localStorage.clear();
+        navigate("/");
+    }, [navigate]);
+
+    useEffect(() => {
+        out();
+    }, [out]);
+    return null;
+}
 
 
 const Links= () => {
@@ -29,9 +44,9 @@ const Links= () => {
   useEffect(()=>{
     let userl = localStorage.getItem("user");
     setUser(JSON.parse(userl || '{}'));
-    console.log(user);
   },[])
   return(
+    <Store>
     <Router>
       <Routes>
         <Route path="/" element={<LoginPage/>}/>
@@ -48,9 +63,11 @@ const Links= () => {
         <Route path="/customers" element={<CustomersPage user={user}/>} />
         <Route path='/users' element={<UsersPage user={user}/>} />
         <Route path="/business-settings" element={<BusinessSettings user={user}/>} />
+        <Route path="/logout" element={<Logout />} />
         <Route path="*" element={<LoginPage />} />
       </Routes>
     </Router>
+    </Store>
   )
 };
 

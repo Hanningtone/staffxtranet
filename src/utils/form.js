@@ -605,10 +605,12 @@ export const LoadForm = (formSchema, submitLabel, endpoint,
            } else {
                 setIsError(false);
                 setResponseMessage(result.message);
-
                 resetForm();
-                dispatch({type:"SET", key:"page", payload: state?.page == 1 ? 1: 0});
+                console.log("Dispatching state page  ", state?.page)
+                dispatch({type:"SET", key:"page", payload: state?.page == 1 ? 0: 1});
                 //result
+
+                console.log("Should have some state already ", state?.page)
            } 
            setSubmitting(false);
        });
