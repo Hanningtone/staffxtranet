@@ -17,6 +17,7 @@ import BusinessBranchesForm from "../components/forms/BusinessBranchesForm";
 import { TiDelete } from 'react-icons/ti'
 import HotelPhotoForm from "../components/forms/HotelPhotoForm";
 import PerkForm from "../components/forms/PerkForm";
+import { confirm } from "react-confirm-box";
 
 
 
@@ -68,13 +69,40 @@ const HotelProfilePage = (user: any) => {
   
     }, [state?.eventspage])
 
+    const deleteHouseRule = async (rule) => {
+        const options = {
+          labels: {
+            confirmable: "Confirm",
+            cancellable: "Cancel"
+          },
+          classNames: {confirmButton: "btn btn-danger", cancelButton:"btn btn-warning"}
+        }
+
+       const confirmed = await confirm("You are about to delet House Rule, This action cannot be undone ?", options);
+       if (confirmed) {
+         console.log("You click yes!");
+
+          let _url = "/house-rules/delete/"+ rule.id;
+
+          makeRequest({ url: _url, method: "delete", data: null }).then(
+            ([status, result]) => {
+              if (status !== 204) {
+                dispatch({type:"SET", key:"page", payload: state?.page === 1? 0 : 1});
+              } else {
+                setError(result?.message || "Error, failed to delete record");
+              }
+            }
+          );
+       }
+       console.log("You click No!");
+    }
 
     const fetchHotelDetials = () => {
 
       let _url = "/business/detail/"+id+"?with=house-rules@business_id,"
          + "user-business-access@business_id,business-branch@business_id,"
-         + "business-branch@business_id,business-photos@business_id," +
-         "room-amenities@business_id,room-perks@business_id,"
+         + "business-branch@business_id,business-photos@business_id," 
+         + "room-amenities@business_id,room-perks@business_id,"
          + "business-stats@business_id,customer_reviews@business_id";
 
       makeRequest({ url: _url, method: "get", data: null }).then(
@@ -83,7 +111,6 @@ const HotelProfilePage = (user: any) => {
             setError(result?.message || "Error, could not fetch records");
           } else {
             setCurrentHotel(result?.data || []);   
-     
           }
         }  
       );
@@ -91,9 +118,10 @@ const HotelProfilePage = (user: any) => {
   /** */  }
 
     useEffect(()=> {
+        console.log("Running page again with state", state?.page);
         fetchHotelDetials();
+    }, [state?.page])
 
-    }, [])
     const defaultProps = {
         center: {
           lat: -1.2627149,
@@ -144,7 +172,7 @@ const HotelProfilePage = (user: any) => {
                                         </div>
                                         <div className="stat-top-wrapper">
                                                 <p className="stat-title">Total Branches on Uncover</p>
-                                                <p className="stat-total"> {currentHotel && currentHotel["business-stats"]?.[0]?.total_branches || ' NN'} </p>
+                                                <p className="stat-total"> {currentHotel && currentHotel["business-stats"]?.[0]?.total_branches || ' N/A'} </p>
                                         </div>
                                     </div>
                             </div>
@@ -155,7 +183,7 @@ const HotelProfilePage = (user: any) => {
                                         </div>
                                         <div className="stat-top-wrapper">
                                                 <p className="stat-title">Total rooms on Uncover</p>
-                                                <p className="stat-total">{currentHotel && currentHotel["business-stats"]?.[0]?.available_rooms || ' NN '}</p>
+                                                <p className="stat-total">{currentHotel && currentHotel["business-stats"]?.[0]?.available_rooms || ' N/A '}</p>
                                         </div>
                                     </div>
                             </div>
@@ -166,7 +194,7 @@ const HotelProfilePage = (user: any) => {
                                         </div>
                                         <div className="stat-top-wrapper">
                                                 <p className="stat-title">Views on Uncover</p>
-                                                <p className="stat-total">{currentHotel && currentHotel["business-stats"]?.[0]?.profile_views || ' NN '}</p>
+                                                <p className="stat-total">{currentHotel && currentHotel["business-stats"]?.[0]?.profile_views || ' N/A '}</p>
                                         </div>
                                     </div>
                             </div>
@@ -177,7 +205,7 @@ const HotelProfilePage = (user: any) => {
                                         </div>
                                         <div className="stat-top-wrapper">
                                                 <p className="stat-title">Bookings on Uncover</p>
-                                                <p className="stat-total">{currentHotel && currentHotel["business-stats"]?.[0]?.total_booking || " NN"}</p>
+                                                <p className="stat-total">{currentHotel && currentHotel["business-stats"]?.[0]?.total_booking || " N/A"}</p>
                                         </div>
                                     </div>
                             </div>
@@ -360,7 +388,13 @@ const HotelProfilePage = (user: any) => {
                                    <div className="profile-content">
                                       { currentHotel && currentHotel["house-rules"]?.map((rule:any) => { 
                                           return (<div className="profile-list">
-                                             <p><i className="fa fa-check-square"></i><span> {rule.narration} </span> </p>
+                                             <div style={{width:"100%"}} >
+                                                <i className="fa fa-check-square"></i>
+                                                <span> {rule.narration} </span> 
+                                                <span style={{float:"right"}} onClick={() => deleteHouseRule(rule)}>
+                                                    <i className="fa fa-trash" style={{color:"red"}}></i>
+                                                </span>
+                                            </div>
                                           </div>)
                                           } 
                                       )}
