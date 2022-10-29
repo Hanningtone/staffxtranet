@@ -105,9 +105,9 @@ const HotelProfilePage = (user: any) => {
 
       let _url = "/business/detail/"+id+"?with=house-rules@business_id,"
          + "user-business-access@business_id,business-branch@business_id,"
-         + "business-branch@business_id,business-photos@business_id," 
-         + "room-amenities@business_id,room-perks@business_id,"
-         + "business-stats@business_id,customer_reviews@business_id,"
+         + "business-branch@business_id,business-photos@business_id,"
+         + "room-amenities@business_id,room-perks@business_id," 
+         + "business-stats@business_id,customer-reviews@business_id,"
          + "whyweloveit@business_id";
 
       makeRequest({ url: _url, method: "get", data: null }).then(
