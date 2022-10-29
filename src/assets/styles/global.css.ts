@@ -24,8 +24,19 @@ export default createGlobalStyle`
      
  }
  .business-photo {
-    width: 100%;
     overflow: hidden;
+    max-width: 100%;
+ }
+
+ .business-photo img {
+    width: 100%;
+ }
+
+ .user-profile .userinfo p {
+    margin-bottom: 0;
+ }
+ .css-1obuvin {
+    color: #ffffff;
  }
   .login-page {
     margin: 0;
