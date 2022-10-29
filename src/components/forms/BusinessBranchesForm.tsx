@@ -4,6 +4,8 @@ import { useForm } from "react-hook-form";
 import { LoadForm } from '../../utils/form';
 import { Context } from '../../context';
 import { useParams } from "react-router-dom";
+import {useNavigate} from 'react-router-dom';
+
 
 interface Props {
     setShowModal: any
@@ -11,47 +13,65 @@ interface Props {
 }
 
 const BusinessBranchesForm = (props : Props) => {
-    const [state, dispach] = useContext(Context);
-    const { submitTitle } = props;
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+    const [error, setError] = useState();
+    const submitLabel = "Create Branch";
+    const endpoint = '/business-branch/create';
     const { id } = useParams();
-
+    
     const schema = {
-        business_id : {
-            type : 'hidden',
-            value : id,
-         },
-         main_branch : {
-            type: 'select',
-            label : ' Is it a Main Branch? ',
-            options : [
-                {value:1, label:'YES'},
-                {value:0, label:'NO'}
-            ],
-            placeholder : 'Is it the main Branch? ',
-            required : true
-         },
-         branch_name : {
-            type: 'text',
-            label : ' Name ',
-            placeholder : 'Enter name of the branch',
-            required : true
-         },
-         description : {
-            type: 'textarea',
-            label : ' Description',
-            placeholder : ' Short Description of the Hotel Branch',
-            required : true,
-         }
+       business_id: {
+            value: id,
+            type:"hidden",
+        },
+
+        branch_name: {
+            required:"required",
+            label: "Branch Name",
+            value: "",
+            type:"text",
+            placeholder:"Enter hotel Branch name"
+        },
+        market_id: {
+            label: "Market",
+            value: "",
+            type:"db_select",
+            model:"market",
+            options:[],
+            model_display_col:['market_name'],
+            placeholder:"Select Market"
+        },
+        main_branch: {
+            value: "0",
+            type:"hidden"
+        },
+         category_id: {
+            label: "Category",
+            value: "",
+            type:"db_select",
+            model:"business-categories",
+            options:[],
+            model_display_col:['category_name'],
+            placeholder:"Select Category"
+        },
+        location: {
+            label: "Location",
+            value: "",
+            type:"places",
+            placeholder:"Start typing location..."
+        },
+         ranking: {
+            value: "0",
+            type:"hidden",
+        },
 
     }
-      
-    const [usersFormSchema, setUsersFormSchema] = useState(schema);
-    const [label, setLabel] = useState("Create Branch");  
-    const [endpoint, setEndpoint] = useState("/business-branch/create");
- 
+
     return(
         <FormWrapper>
-            { LoadForm(usersFormSchema, label, endpoint) }
+        <h3 className="form-title plain">Create New Branch</h3>
+           {LoadForm(schema, submitLabel, endpoint)}
         </FormWrapper>
     )
 }

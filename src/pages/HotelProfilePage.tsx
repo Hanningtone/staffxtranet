@@ -498,8 +498,8 @@ const HotelProfilePage = (user: any) => {
             { message && <div className={classname}>{message}</div> }
             <BusinessBranchesForm 
                 setShowModal={showHotelBranchModal}
-                submitTitle=" Add Branch"
                 />
+                <button className="btn btn-danger" onClick={()=>setShowHotelBranchModal(false)} style={{float: "right", marginTop:-30}}>Cancel</button>
         </CustomModalPane>
 
 
