@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useForm } from "react-hook-form";
 import { LoadForm } from '../../utils/form';
 import { Context } from '../../context';
+import { useParams } from "react-router-dom";
 
 interface Props {
     setShowModal: any
@@ -12,18 +13,15 @@ interface Props {
 const HouseRulesForm = (props : Props) => {
     const [state, dispach] = useContext(Context);
     const { submitTitle } = props;
+    const { id } = useParams();
 
     const schema = {
         business_id : {
-            type: 'db_select',
-            label : 'Business / Hotel',
-            model : 'business',
-            model_display_col : ['name'],
-            placeholder : 'Select Busines or Hotel ',
-            required : true
+            value : id,
+            type : 'hidden'
          },
-         narration : {
-            type: 'text',
+         narration : {  
+            type: 'textarea',
             label : 'Text ',
             placeholder : 'Type the rule here',
             required : true

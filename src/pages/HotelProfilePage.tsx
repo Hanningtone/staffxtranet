@@ -41,6 +41,7 @@ const HotelProfilePage = (user: any) => {
     const [message, setMessage] = useState();
     const [currentHotel, setCurrentHotel] = useState<any>();
     const [showPhotoModal, setShowPhotoModal] = useState(false);
+    const [modalTitle, setModalTitle] = useState("");
     const {id} = useParams();
    
 
@@ -119,15 +120,6 @@ const HotelProfilePage = (user: any) => {
     };
     
      const initialSelectedIndex = options.findIndex(({value}) => value === "bar");
-
-    const showModalForm = (show : any, 
-      title='Create Event', 
-      submitTitle='Create Record') =>{
-      setModalTitle(title);
-      setSubmitTitle(submitTitle);
-      setShowModal(show);
-    }
-
 
     return (
         <AdminLayout showSideMenu={true}  user={user}>
@@ -258,7 +250,7 @@ const HotelProfilePage = (user: any) => {
                                     <div className="profile-photo-wrapper">
                                      
                                       { currentHotel && currentHotel["business-photos"]?.map((photo:any) => {
-                                          return (<div className="profile-photo business-photo"><img src={photo.url_path} alt="" /></div>)
+                                          return (<div className="profile-photo business-photo"><img src={photo.url_path} alt=" Nothing to show " /></div>)
                                         })
                                       }
                                     </div>  

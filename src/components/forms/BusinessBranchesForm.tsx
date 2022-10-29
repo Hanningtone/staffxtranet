@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useForm } from "react-hook-form";
 import { LoadForm } from '../../utils/form';
 import { Context } from '../../context';
+import { useParams } from "react-router-dom";
 
 interface Props {
     setShowModal: any
@@ -12,19 +13,16 @@ interface Props {
 const BusinessBranchesForm = (props : Props) => {
     const [state, dispach] = useContext(Context);
     const { submitTitle } = props;
+    const { id } = useParams();
 
     const schema = {
         business_id : {
-            type: 'db_select',
-            label : 'Select Hotel or Business',
-            model : 'business',
-            model_display_col : ['name'],
-            placeholder : 'Select Busines or Hotel ',
-            required : true
+            type : 'hidden',
+            value : id,
          },
          main_branch : {
             type: 'select',
-            label : ' Main Branch? ',
+            label : ' Is it a Main Branch? ',
             options : [
                 {value:1, label:'YES'},
                 {value:0, label:'NO'}
@@ -41,7 +39,7 @@ const BusinessBranchesForm = (props : Props) => {
          description : {
             type: 'textarea',
             label : ' Description',
-            placeholder : ' Short Description of the Hotel',
+            placeholder : ' Short Description of the Hotel Branch',
             required : true,
          }
 
