@@ -45,7 +45,7 @@ const Header = () => {
                                     </div>
                                     <hr className="firsthr"/>
                                     <p><a href="#">Change password</a></p>
-                                    <p><a href="#">Account Details</a></p>
+                                    <p><a href="#">Profile</a></p>
                                     <p><a href="#">Help </a></p>
                                     <hr/>
                                     <p className="loguser">logout</p>

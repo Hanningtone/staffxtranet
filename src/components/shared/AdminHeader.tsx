@@ -51,13 +51,14 @@ const AdminHeader = (props: any) => {
                             <div className="user-profile">
                                 <Avatar color={'#188754'} round={true} name="Evans Wanyama" size="35" />
                                 <div className="nameuser">
-                                    <span className="user-name">{user?.first_name}&nbsp; {user?.last_name}</span>
-                                    <span className="company">{user?.business_access.map((value:any) => value.business_name  )}</span>
+                                    
                                 </div> 
                                 <div className="userinfo">
-                                    <p><a href="#">Change password</a></p>
-                                    <p><a href="#">Account Details</a></p>
+                                    <p><span className="user-name">{user?.first_name}&nbsp; {user?.last_name}</span></p>
+                                    <p><ul className="company">{user?.business_access.map((value:any) => <li>{value.business_name}</li>  )}</ul></p>
+                                    <p><a href="#">My Profile</a></p>
                                     <p><a href="#">Help </a></p>
+                                    <p><a href="#">Change password</a></p>
                                     <hr/>
                                     <p className="loguser" onClick= {Logout }>logout</p>
                                 </div>

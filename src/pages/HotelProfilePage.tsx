@@ -16,6 +16,7 @@ import HouseRulesForm from "../components/forms/HouseRulesForm";
 import BusinessBranchesForm from "../components/forms/BusinessBranchesForm";
 import { TiDelete } from 'react-icons/ti'
 import HotelPhotoForm from "../components/forms/HotelPhotoForm";
+import PerkForm from "../components/forms/PerkForm";
 
 
 
@@ -42,6 +43,7 @@ const HotelProfilePage = (user: any) => {
     const [currentHotel, setCurrentHotel] = useState<any>();
     const [showPhotoModal, setShowPhotoModal] = useState(false);
     const [modalTitle, setModalTitle] = useState("");
+    const [showPerkModal, setShowPerkModal] = useState(false);
     const {id} = useParams();
    
 
@@ -306,7 +308,7 @@ const HotelProfilePage = (user: any) => {
                                     <div className="profile-header">
                                         <p>Perks</p>
                                         <div className="profile-controls">
-                                           <a href="#"><i className="fa fa-edit"></i> Add</a>
+                                           <a href="#" onClick = {()=>setShowPerkModal(true)}><i className="fa fa-edit"></i> Add</a>
                                         </div>
                                     </div>
                                    <hr></hr>
@@ -457,6 +459,21 @@ const HotelProfilePage = (user: any) => {
                 setShowModal={showHotelBranchModal}
                 submitTitle=" Add Branch"
                 />
+        </CustomModalPane>
+
+
+        <CustomModalPane show={showPerkModal}
+           title = " Add New Perk"
+           hideThisModal={() => setShowPerkModal(false)}
+           >
+            { message && <div className={classname}>{message}</div> }
+            <PerkForm 
+                setShowModal={showPerkModal}
+
+                />
+            <button className="btn btn-danger" onClick={()=>setShowPerkModal(false)} style={{
+    float: "right", marginTop:-30}}>Cancel</button>
+
         </CustomModalPane>
 
 
