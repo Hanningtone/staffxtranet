@@ -38,6 +38,13 @@ export default createGlobalStyle`
  .css-1obuvin {
     color: #ffffff;
  }
+
+ .list-faint-line {
+    border-bottom: 1px solid #f0f0f0;
+ }
+ .list-faint-line:last-child {
+    border-bottom: none;
+ }
   .login-page {
     margin: 0;
     padding: 0;

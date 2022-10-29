@@ -18,6 +18,8 @@ import { TiDelete } from 'react-icons/ti'
 import HotelPhotoForm from "../components/forms/HotelPhotoForm";
 import PerkForm from "../components/forms/PerkForm";
 import { confirm } from "react-confirm-box";
+import LoveForm from "../components/forms/LoveForm";
+import ServicesAndAmenitiesForm from "../components/forms/ServicesAndAmenitiesForm";
 
 
 
@@ -45,6 +47,8 @@ const HotelProfilePage = (user: any) => {
     const [showPhotoModal, setShowPhotoModal] = useState(false);
     const [modalTitle, setModalTitle] = useState("");
     const [showPerkModal, setShowPerkModal] = useState(false);
+    const [showLoveModal, setShowLoveModal] = useState(false);
+    const [showServiceAmenityModal, setShowServiceAmenityModal] = useState(false);
     const {id} = useParams();
    
 
@@ -103,7 +107,8 @@ const HotelProfilePage = (user: any) => {
          + "user-business-access@business_id,business-branch@business_id,"
          + "business-branch@business_id,business-photos@business_id," 
          + "room-amenities@business_id,room-perks@business_id,"
-         + "business-stats@business_id,customer_reviews@business_id";
+         + "business-stats@business_id,customer_reviews@business_id,"
+         + "whyweloveit@business_id";
 
       makeRequest({ url: _url, method: "get", data: null }).then(
         ([status, result]) => {
@@ -285,31 +290,34 @@ const HotelProfilePage = (user: any) => {
                                       }
                                     </div>  
                                 </Profile>
-                               { /*  <Profile>
+                                <Profile>
                                    <div className="profile-header">
                                        <p>Why we love it</p>
                                        <div className="profile-controls">
-                                           <a href="#"><i className="fa fa-edit"></i> Add</a>
+                                           <a href="#" onClick = {()=>setShowLoveModal(true)}><i className="fa fa-edit"></i> Add Comment</a>
                                         </div>
                                    </div>
 
                                    <hr></hr>
                                    <div className="profile-content">
-                                      <div className="profile-list">
-                                         <p><i className="fa fa-check-square"></i><span> Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,molestiae quas vel </span> </p>
-                                      </div>
-                                      <div className="profile-list">
-                                          <p><i className="fa fa-check-square"></i> <span> Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,molestiae quas vel </span> </p>
-                                      </div>
-                                      <div className="profile-list">
-                                         <p><i className="fa fa-check-square"></i><span> Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,molestiae quas vel </span> </p>
-                                      </div>
+                                    { currentHotel && currentHotel.whyweloveit?.map((narration:any) => {
+                                          return (
+                                          <div className="profile-list">
+                                             <p><i className="fa fa-check-square"></i><span> {narration.narration} </span> </p>
+                                          </div>
+                                          )
+                                        })
+                                      }
+
                                    </div>
-                                </Profile> */}
+                                </Profile>
                                    
                                 <Profile>
                                     <div className="profile-header">
                                         <p>Services and Amenities</p>
+                                        <div className="profile-controls">
+                                           <a href="#" onClick = {()=>setShowServiceAmenityModal(true)}><i className="fa fa-edit"></i> Add Service/amenity</a>
+                                        </div>
                                     </div>
                                     <hr></hr>
                                     <div className="profile-services">
@@ -429,12 +437,12 @@ const HotelProfilePage = (user: any) => {
 
                                 <Profile>
                                     <div className="profile-header">
-                                        <p>Reviews</p>
+                                        <p>Customer Reviews</p>
                                     </div>
                                    <hr></hr>
-                                   <div className="profile-wrapper">
-                                    {currentHotel && currentHotel["customer_reviews"]?.map((review:any) => { 
-                                            return (<div><span>Rating <br/> <h5> { review.rate }</h5></span></div>)
+                                   <div className="">
+                                    {currentHotel && currentHotel["customer-reviews"]?.map((review:any) => { 
+                                            return (<div className="list-faint-line"><span>Rating <br/> <h5> { review.rate }</h5></span></div>)
                                         })
                                     }
                                    </div>
@@ -504,8 +512,32 @@ const HotelProfilePage = (user: any) => {
                 setShowModal={showPerkModal}
 
                 />
-            <button className="btn btn-danger" onClick={()=>setShowPerkModal(false)} style={{
-    float: "right", marginTop:-30}}>Cancel</button>
+            <button className="btn btn-danger" onClick={()=>setShowPerkModal(false)} style={{float: "right", marginTop:-30}}>Cancel</button>
+
+        </CustomModalPane>
+
+        <CustomModalPane show={showServiceAmenityModal}
+           title = " Add New Service/amenity"
+           hideThisModal={() => setShowServiceAmenityModal(false)}
+           >
+            { message && <div className={classname}>{message}</div> }
+            <ServicesAndAmenitiesForm 
+                setShowModal={showServiceAmenityModal}
+
+                />
+            <button className="btn btn-danger" onClick={()=>setShowServiceAmenityModal(false)} style={{float: "right", marginTop:-30}}>Cancel</button>
+
+        </CustomModalPane>
+        <CustomModalPane show={showLoveModal}
+           title = " Add Why We Love It"
+           hideThisModal={() => setShowLoveModal(false)}
+           >
+            { message && <div className={classname}>{message}</div> }
+            <LoveForm 
+                setShowModal={showLoveModal}
+
+                />
+            <button className="btn btn-danger" onClick={()=>setShowLoveModal(false)} style={{float: "right", marginTop:-30}}>Cancel</button>
 
         </CustomModalPane>
 
