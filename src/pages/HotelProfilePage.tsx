@@ -85,10 +85,10 @@ const HotelProfilePage = (user: any) => {
             setCurrentHotel(result?.data || []);   
      
           }
-        }
+        }  
       );
       
-    }
+  /** */  }
 
     useEffect(()=> {
         fetchHotelDetials();
@@ -188,7 +188,7 @@ const HotelProfilePage = (user: any) => {
                                    <div className="profile-header">
                                        <p>Basic Info</p>
                                        <div className="profile-controls">
-                                           <a href="#"><i className="fa fa-edit"></i> Edit</a>
+                                           
                                        </div>
                                    </div>
                                    <hr></hr>
@@ -328,9 +328,8 @@ const HotelProfilePage = (user: any) => {
                             <div className="col-lg-6">
                                <Profile>
                                     <div className="profile-header">
-                                        <p>Managers</p>
+                                        <p>Users</p>
                                     <div className="profile-controls">
-                                            <a href="#" onClick={ () => setShowUsersModal(true)} > <i className="fa fa-edit" ></i> Add</a> 
                                     </div>
                                     </div>
                                    <hr></hr>
@@ -345,7 +344,7 @@ const HotelProfilePage = (user: any) => {
                                                      return role.role;   
                                                 })}</p>
                                             </div>
-                                            <div className=" button_wrapper" > <button className="remove_button" > <TiDelete /> </button> </div>
+                                            <div className=" button_wrapper" > <button className="remove_button" > Suspend </button> </div>
                                         </div> )
                                    })}
                                    

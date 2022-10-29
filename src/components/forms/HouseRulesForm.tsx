@@ -22,7 +22,7 @@ const HouseRulesForm = (props : Props) => {
          },
          narration : {  
             type: 'textarea',
-            label : 'Text ',
+            label : 'Write your rule ',
             placeholder : 'Type the rule here',
             required : true
          },
