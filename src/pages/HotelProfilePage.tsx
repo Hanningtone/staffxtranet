@@ -253,7 +253,7 @@ const HotelProfilePage = (user: any) => {
                                 </Profile>
                                 <Profile>
                                     <div className="profile-header">
-                                        <p>Location</p>
+                                        <p>Location - {currentHotel.name}</p>
                                         <div className="profile-controls">
                                            <a href="#"><i className="fa fa-edit"></i> Edit</a>
                                         </div>
