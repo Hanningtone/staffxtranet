@@ -259,7 +259,7 @@ const HotelProfilePage = (user: any) => {
                                 </Profile>
                                 <Profile>
                                     <div className="profile-header">
-                                        <p>Location</p>
+                                        <p>Location - {currentHotel.name}</p>
                                         <div className="profile-controls">
                                            <a href="#"><i className="fa fa-edit"></i> Edit</a>
                                         </div>
@@ -528,8 +528,8 @@ const HotelProfilePage = (user: any) => {
             { message && <div className={classname}>{message}</div> }
             <BusinessBranchesForm 
                 setShowModal={showHotelBranchModal}
-                submitTitle=" Add Branch"
                 />
+                <button className="btn btn-danger" onClick={()=>setShowHotelBranchModal(false)} style={{float: "right", marginTop:-30}}>Cancel</button>
         </CustomModalPane>
 
 
