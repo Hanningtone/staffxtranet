@@ -15,7 +15,7 @@ const HotelBasicInfoUpdateForm = (props: Props) => {
     const [error, setError] = useState();
     const submitLabel = "Update Hotel";
     const { id } = useParams();
-    const endpoint = '/business/update/{ id }';
+    const endpoint = '/business/update/'+ id;
     
     const schema = {
        
