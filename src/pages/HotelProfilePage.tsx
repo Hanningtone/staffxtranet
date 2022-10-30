@@ -233,11 +233,11 @@ const HotelProfilePage = (user: any) => {
                                    <hr></hr>
                                    <div className="field-wrapper">
                                         <span className="left"> Name:</span>
-                                        <span>{currentHotel && currentHotel.name}</span>
+                                        <span>{currentHotel && currentHotel?.name}</span>
                                     </div>
                                     <div className="field-wrapper">
                                         <span className="left">Category:</span>
-                                        <span>{currentHotel && currentHotel.category?.category_name}</span>
+                                        <span>{currentHotel && currentHotel?.category?.category_name}</span>
                                     </div>
                                     <div className="field-wrapper">
                                         <span className="left">Market:</span>
@@ -245,21 +245,21 @@ const HotelProfilePage = (user: any) => {
                                     </div>
                                     <div className="field-wrapper">
                                         <span className="left">Property Type:</span>
-                                        <span>{currentHotel && currentHotel.property_type}</span>
+                                        <span>{currentHotel && currentHotel?.property_type}</span>
                                     </div>
                                     <div className="field-wrapper">
                                         <span className="left">Primary Contact:</span>
-                                        <span>{ currentHotel && currentHotel.primary_contact_number}</span>
+                                        <span>{ currentHotel && currentHotel?.primary_contact_number}</span>
                                     </div>
                                     <div className="field-wrapper">
                                         <span className="left">Request to book enabled:</span>
-                                        <span>{currentHotel && currentHotel.request_to_book_enabled }</span>
+                                        <span>{currentHotel && currentHotel?.request_to_book_enabled }</span>
                                     </div>
                                   
                                 </Profile>
                                 <Profile>
                                     <div className="profile-header">
-                                        <p>Location - {currentHotel.name}</p>
+                                        <p>Location - {currentHotel?.name}</p>
                                         <div className="profile-controls">
                                            <a href="#"><i className="fa fa-edit"></i> Edit</a>
                                         </div>
@@ -528,6 +528,7 @@ const HotelProfilePage = (user: any) => {
             { message && <div className={classname}>{message}</div> }
             <BusinessBranchesForm 
                 setShowModal={showHotelBranchModal}
+                submitTitle = " Add New Hotel Branch"
                 />
                 <button className="btn btn-danger" onClick={()=>setShowHotelBranchModal(false)} style={{float: "right", marginTop:-30}}>Cancel</button>
         </CustomModalPane>

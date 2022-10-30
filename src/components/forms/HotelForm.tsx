@@ -41,6 +41,12 @@ const HotelForm = (props: Props) => {
             model_display_col:['category_name'],
             placeholder:"Select Category"
         },
+        description: {
+            label : 'Description',
+            type : 'textarea',
+            placeholder: ' Enter Description',
+
+        }, 
         location: {
             label: "Location",
             value: "",

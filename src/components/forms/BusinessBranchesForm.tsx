@@ -61,6 +61,12 @@ const BusinessBranchesForm = (props : Props) => {
             type:"places",
             placeholder:"Start typing location..."
         },
+        description: {
+            label : 'Description',
+            type : 'textarea',
+            placeholder: ' Enter Description',
+
+        }, 
          ranking: {
             value: "0",
             type:"hidden",
