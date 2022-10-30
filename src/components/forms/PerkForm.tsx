@@ -33,16 +33,6 @@ const PerkForm = (props: Props) => {
             type:"textarea",
             placeholder: "Describe Your Perk",
         },
-        room_type_id: {
-            label: "Room Type",
-            value: "",
-            type:"db_select",
-            model:"room-types",
-            options:[],
-            model_display_col:['title'],
-            placeholder:"Select Room Type"
-        },
-
         start_date: {
             label: "Click To Pick Start Date",
             type:"datetime",

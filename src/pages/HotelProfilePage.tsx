@@ -15,6 +15,7 @@ import CustomModalPane from "../utils/_modal";
 import HouseRulesForm from "../components/forms/HouseRulesForm";
 import BusinessBranchesForm from "../components/forms/BusinessBranchesForm";
 import { TiDelete } from 'react-icons/ti'
+import { RiDeleteBin2Line } from 'react-icons/ri'
 import HotelPhotoForm from "../components/forms/HotelPhotoForm";
 import PerkForm from "../components/forms/PerkForm";
 import { confirm } from "react-confirm-box";
@@ -73,7 +74,7 @@ const HotelProfilePage = (user: any) => {
   
     }, [state?.eventspage])
 
-    const deleteHouseRule = async (rule) => {
+    const deleteRecord = async (rule:any, endpoint: any) => {
         const options = {
           labels: {
             confirmable: "Confirm",
@@ -82,11 +83,11 @@ const HotelProfilePage = (user: any) => {
           classNames: {confirmButton: "btn btn-danger", cancelButton:"btn btn-warning"}
         }
 
-       const confirmed = await confirm("You are about to delet House Rule, This action cannot be undone ?", options);
+       const confirmed = await confirm("You are about to delete this record, This action cannot be undone ?", options);
        if (confirmed) {
          console.log("You click yes!");
 
-          let _url = "/house-rules/delete/"+ rule.id;
+          let _url = endpoint+ rule.id;
 
           makeRequest({ url: _url, method: "delete", data: null }).then(
             ([status, result]) => {
@@ -100,6 +101,11 @@ const HotelProfilePage = (user: any) => {
        }
        console.log("You click No!");
     }
+
+    const implementDelete = (record:any, endpoint : any) => {
+        deleteRecord(record, endpoint);
+    }
+
 
     const fetchHotelDetials = () => {
 
@@ -285,7 +291,15 @@ const HotelProfilePage = (user: any) => {
                                     <div className="profile-photo-wrapper">
                                      
                                       { currentHotel && currentHotel["business-photos"]?.map((photo:any) => {
-                                          return (<div className="profile-photo business-photo"><img src={photo.url_path} alt=" Nothing to show " /></div>)
+                                          return (
+                                          
+                                
+                                          <div className="profile-photo business-photo"><img src={photo.url_path} alt=" Nothing to show " />
+                                           <span style={{float:"right"}} onClick={() => implementDelete(photo, '/business-photos/delete/')}>
+                                                    <i className="fa fa-trash" style={{color:"red"}}></i>
+                                           </span>
+                                           
+                                          </div>)
                                         })
                                       }
                                     </div>  
@@ -295,6 +309,7 @@ const HotelProfilePage = (user: any) => {
                                        <p>Why we love it</p>
                                        <div className="profile-controls">
                                            <a href="#" onClick = {()=>setShowLoveModal(true)}><i className="fa fa-edit"></i> Add Comment</a>
+
                                         </div>
                                    </div>
 
@@ -302,12 +317,19 @@ const HotelProfilePage = (user: any) => {
                                    <div className="profile-content">
                                     { currentHotel && currentHotel.whyweloveit?.map((narration:any) => {
                                           return (
+                                            <>
                                           <div className="profile-list">
                                              <p><i className="fa fa-check-square"></i><span> {narration.narration} </span> </p>
+
+                                             <span style={{float:"right"}} onClick={() => implementDelete(narration, '/whyweloveit/delete/')}>
+                                                    <i className="fa fa-trash" style={{color:"red"}}></i>
+                                              </span>
                                           </div>
+                                           </>
                                           )
                                         })
                                       }
+                                   
 
                                    </div>
                                 </Profile>
@@ -320,20 +342,25 @@ const HotelProfilePage = (user: any) => {
                                         </div>
                                     </div>
                                     <hr></hr>
-                                    <div className="profile-services">
+                                    <div 
+                                    className="profile-services">
                                         { currentHotel && currentHotel["room-amenities"]?.map((am:any) => { 
-                                             return (<div className="profile-list">
+                                             return ( <>
+                                             <div className="profile-list">
+                                                
                                                <span><b>{am.name}</b> &nbsp; {am.description}</span>
-                                               <div className="profile-selector-wrapper" style={{width: 100}}>
-                                                <SwitchSelector
-                                                        onChange={onChange}
-                                                        options={options}
-                                                        initialSelectedIndex={initialSelectedIndex}
-                                                        backgroundColor={"#353b48"}
-                                                        fontColor={"#f5f6fa"}
-                                                    />
+                                               <div className="profile-selector-wrapper" style={{width: 100  }}>
+                                    
                                                 </div>
-                                            </div>)
+                                                <span style={{float:"right"}} onClick={() => implementDelete(am, '/room-amenities/delete/')}>
+                                                    <i style={{color:"red"}}> <RiDeleteBin2Line /> </i>
+                                              </span>
+                                                
+                                               
+                                            </div>
+                                            
+                                            
+                                            </>)
                                         })
                                         }
 
@@ -353,6 +380,9 @@ const HotelProfilePage = (user: any) => {
 
                                            return (<div className="profile-list">
                                                  <p><i className="fa fa-check-square"></i><span><b>{perk.name}</b> &nbsp; {perk.description}</span> </p>
+                                                 <span style={{float:"right"}} onClick={() => implementDelete(perk, '/room-perks/delete/')}>
+                                                    <i style={{color:"red"}}> <RiDeleteBin2Line /> </i>
+                                              </span>
                                               </div>)
                                           })
                                       }
@@ -380,7 +410,7 @@ const HotelProfilePage = (user: any) => {
                                                      return role.role;   
                                                 })}</p>
                                             </div>
-                                            <div className=" button_wrapper" > <button className="remove_button" > Suspend </button> </div>
+                                            <div className=" button_wrapper" > <button className="remove_button" > <p style={{ fontSize:"10px" }}> Suspend</p> <RiDeleteBin2Line/> </button> </div>
                                         </div> )
                                    })}
                                    
@@ -399,7 +429,7 @@ const HotelProfilePage = (user: any) => {
                                              <div style={{width:"100%"}} >
                                                 <i className="fa fa-check-square"></i>
                                                 <span> {rule.narration} </span> 
-                                                <span style={{float:"right"}} onClick={() => deleteHouseRule(rule)}>
+                                                <span style={{float:"right"}} onClick={() => deleteRecord(rule, '/house-rules/delete/')}>
                                                     <i className="fa fa-trash" style={{color:"red"}}></i>
                                                 </span>
                                             </div>
@@ -421,13 +451,13 @@ const HotelProfilePage = (user: any) => {
                                     {currentHotel && currentHotel["business-branch"].map((branch:any) => {
                                       return (<>
                                       <div className="profile-wrapper"> 
-                                             <div className="item-photo"> </div>
+                    
                                              <div className="item-datails">
                                                 <h6>{branch.branch_name}</h6>
                                                 <p>{branch.description}</p> 
                                              </div>
                                              
-                                             <div className=" button_wrapper" > <button className="remove_button" > <TiDelete color="#B80025" /> </button> </div>
+                                         
                                              </div>
                                          </>)
                                          } )

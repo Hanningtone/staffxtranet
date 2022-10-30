@@ -570,7 +570,7 @@ export const getFormElement = (elementName, elementSchema) => {
 };
 
 export const LoadForm = (formSchema, submitLabel, endpoint, 
-    enctype=null) => {
+    enctype="") => {
    
    const {formData, validationSchema} = initForm(formSchema);
    
