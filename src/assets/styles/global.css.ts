@@ -13,6 +13,8 @@ export default createGlobalStyle`
     margin: 0;
     height: 100%;
   }
+
+
  .bg-c {
      background:#fff;
      table th {
@@ -354,5 +356,14 @@ export default createGlobalStyle`
     padding-bottom: 7px;
     font-size: 18px;
 }
+
+table thead.thead-light.green {
+    backgound: rgb(0, 108, 103);
+    color: #ffffff;
+  }
+table thead.thead-light.green{
+    background: rgb(24, 135, 84);
+    color: #ffffff;
+  }
 
      `;

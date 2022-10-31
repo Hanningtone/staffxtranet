@@ -134,7 +134,7 @@ const CategoriesPage = (user: any) => {
                         </div>
                         <div className="col-lg-6">
                         <table>
-                            <thead>
+                            <thead className="thead-light green">
                                 <tr>
                                     <td>Name</td>
                                     <td>Total Hotels</td>

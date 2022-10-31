@@ -119,7 +119,7 @@ const MarketsPage = (user: any) => {
         <Home>
             <SubHeader
              pageTitle="Markets"
-             pageSubTitle="200 hotel on Uncover"
+             pageSubTitle={<div style={{backgroundColor:"#0d6efd", color:"white", borderRadius:"50%", width: "30px",height:"30px",textAlign:"center",lineHeight:"30px"}}>{markets?.length}</div>}
              btnTxt="Create new market"
              onPress = {()=>showModalForm(!showModal)}
              showCreateButton = {true}
@@ -131,7 +131,7 @@ const MarketsPage = (user: any) => {
                     </div>
                     <div className="col-lg-6">
                         <table>
-                            <thead>
+                            <thead className="thead-light green">
                                 <tr>
                                     <td>Market Name</td>
                                     <td>Country</td>

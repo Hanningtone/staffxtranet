@@ -10,14 +10,7 @@ interface Props {
 const PromtionsForm = (props: Props) => {
 
     const schema = {
-        room_type_id : {
-            type: 'db_select',
-            label : 'Room Type',
-            model : 'room-types',
-            model_display_col : ['title'],
-            placeholder : 'Select Busines or Hotel ',
-            required : true
-         },
+        
          title : {
             type: 'text',
             label : 'Promo Title ',
@@ -32,7 +25,7 @@ const PromtionsForm = (props: Props) => {
          },
          amount_discounted : {
             type: 'text',
-            label : 'Amount to Discount ',
+            label : 'Maximum Discount Limit',
             placeholder : 'Enter Amount to Discount ',
             required : true
          },
@@ -46,7 +39,6 @@ const PromtionsForm = (props: Props) => {
             type: 'datetime',
             label : 'Start Date',
             placeholder : 'Enter date to start the Promo',
-
             required : false
          },
          end_date: {

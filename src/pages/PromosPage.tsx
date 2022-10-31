@@ -25,6 +25,8 @@ const PromosPage = (user: any) => {
     const [error, setError] = useState(null);
     const [message, setMessage] = useState();
     const [classname, setClassname] = useState('success');
+    const [selectedPromo, setSelectedPromo] = useState<any>();
+
 
 
 
@@ -69,64 +71,67 @@ const PromosPage = (user: any) => {
     const showModalForm = (show: boolean) =>{
         setShowModal(show);
     }
+
+    const editSelectedCategory = () => {
+        showModalForm(!showModal);
+    }
+
     return(
         <AdminLayout showSideMenu={true}  user={user}>
         <Home>
             <SubHeader
              pageTitle="Promos"
-             pageSubTitle="Referal Codes and Promotions"
+             pageSubTitle="Promotions"
              btnTxt = "Create new Promo"
              onPress = {()=>showModalForm(!showModal)}
              showCreateButton = {true}
             />
             <div className="container-fluid">
-          <div className="row pe-1">
-              <div className="col-lg-6">
+            <div className="row pe-1">
+              <div className="col-lg-12">
 
-                  <DataTable data = {promotions }/>
+                  <table>
+                    <thead className="thead-light green">
+                        <tr>
+                            <td>Title</td>
+                            <td>Narration</td>
+                            <td>Amount DIscounted</td>
+                            <td>% Discount</td>
+                            <td>Start Date</td>
+                            <td>End Date</td>
+                            <td>Actions</td>
+                        </tr>
+                    </thead>
+                            
+                            {promotions && (
+                                <tbody>
+                                    {promotions.map((promotion:any) => {
+                                     return  <tr>
+                                        <td>{promotion?.title}</td>
+                                        <td>{promotion?.narration}</td>
+                                        <td>{promotion?.amount_discounted}</td>
+                                        <td>{promotion?.percentage_discount}</td>
+                                        <td>{promotion?.start_date}</td>
+                                        <td>{promotion.end_date}</td>
+                                        <td>
+                                            <span style={{float:"left"}} onClick ={ () => setSelectedPromo(promotion)}>
+                                                    <i className="fa fa-edit"></i>
+                                              </span>
+                                            <span style={{float:"right"}} onClick={() => implementDelete(promotion, '/promotions/delete/')}>
+                                                    <i className="fa fa-trash" style={{color:"red"}}></i>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    })
+                                    }
+                                </tbody>
+                            )
+                            }
+
+                        </table>
               </div>
-              <div className="col-lg-4">
-                        <Sidebar>
-                                <div className="field-wrapper">
-                                    <div>
-                                            <span className="h4">Your Profile</span>
-                                    </div>
-                                    <div className="btnwrapper">
-                                            <button>Change Details</button>
-                                    </div>
-                                </div>
-                                <hr className="firstchild" />
-                                <div className="field-wrapper">
-                                    <span className="h5">Name: </span>
-                                    <span>{user?.first_name} &nbsp; {user?.last_name}</span>
-                                </div>
-                                <hr  />
-                                <div className="field-wrapper">
-                                    <span className="h5">Email : </span>
-                                    <span> { user?.email } </span>
-                                </div>
-                                <hr />
-                                <div className="field-wrapper">
-                                    <span className="h5">Phone Number : </span>
-                                    <span > { user?.phone_number } </span>
-                                </div>
-                               
-                            </Sidebar>
-                            <Sidebar>
-                               <div className="field-wrapper">
-                                    <div>
-                                        <span><strong>My Businesses </strong></span>
-
-                                    </div>
-                                </div>
-
-                                <hr className="firstchild" />
-
-                                
-                            </Sidebar>
-                    </div>
-          </div>
-        </div>
+                        </div>
+            </div>
 
         <CustomModalPane
                 show={showModal}
@@ -137,6 +142,8 @@ const PromosPage = (user: any) => {
                 {message && <div className={classname}>{message}</div>}
                 <PromtionsForm setShowModal={showModal} />
               </CustomModalPane>
+
+            
         </Home>
         </AdminLayout>
     )
