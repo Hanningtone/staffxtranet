@@ -331,7 +331,6 @@ const HotelProfilePage = (user: any) => {
                                             <>
                                           <div className="profile-list">
                                              <p><i className="fa fa-check-square"></i><span> {narration.narration} </span> </p>
-
                                              <span style={{float:"right"}} onClick={() => implementDelete(narration, '/whyweloveit/delete/')}>
                                                     <i className="fa fa-trash" style={{color:"red"}}></i>
                                               </span>
@@ -769,3 +768,4 @@ const Profile = styled.div`{
     `
 
 export default HotelProfilePage;
+

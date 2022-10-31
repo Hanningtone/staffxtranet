@@ -15,6 +15,8 @@ import { AdminLayout,
 import makeRequest from "../utils/fetch-request";
 import DataTable from "../utils/table"
 import { Context } from "../context";
+import { confirm } from "react-confirm-box";
+
 
 
 const CategoriesPage = (user: any) => {
@@ -25,6 +27,37 @@ const CategoriesPage = (user: any) => {
     const [state, dispatch ] =  useContext(Context);
     const [token, setToken] = useState();
     const [error, setError] = useState();
+
+    const deleteRecord = async (rule:any, endpoint: any) => {
+        const options = {
+          labels: {
+            confirmable: "Confirm",
+            cancellable: "Cancel"
+          },
+          classNames: {confirmButton: "btn btn-danger", cancelButton:"btn btn-warning"}
+        }
+
+       const confirmed = await confirm("You are about to delete this record, This action cannot be undone ?", options);
+       if (confirmed) {
+         console.log("You click yes!");
+
+          let _url = endpoint+ rule.id;
+
+          makeRequest({ url: _url, method: "delete", data: null }).then(
+            ([status, result]) => {
+              if (status !== 204) {
+                dispatch({type:"SET", key:"page", payload: state?.page === 1? 0 : 1});
+              } else {
+                setError(result?.message || "Error, failed to delete record");
+              }
+            }
+          );
+       }
+       console.log("You click No!");
+    }
+    const implementDelete = (record:any, endpoint : any) => {
+        deleteRecord(record, endpoint);
+    }
 
     const showModalForm = (show: boolean) =>{
         setShowModal(show);
@@ -47,11 +80,17 @@ const CategoriesPage = (user: any) => {
         );
       };
 
-    useEffect(() => {
-        if(categories) {
-            setSelectedCategory(categories[0]);
+   useEffect(() => {
+        if(selectedCategory) {
+           showModalForm(!showModal);
         }
-    }, [categories])
+    }, [selectedCategory]);
+
+  
+     useEffect(() => {
+        getCategories();
+    }, [state?.page])
+
 
     useEffect(() => {
         dispatch({type:"SET", key:'context', payload:'categoriespage'});
@@ -101,19 +140,26 @@ const CategoriesPage = (user: any) => {
                                     <td>Total Hotels</td>
                                     <td>Color</td>
                                     <td>Description</td>
-                                    <td>ACtions</td>
+                                    <td>Actions</td>
                                 </tr>
                             </thead>
                             
                             {categories && (
                                 <tbody>
                                     {categories.map((category:any) => {
-                                     return  <tr onClick ={ () => setSelectedCategory(category)}>
+                                     return  <tr>
                                         <td>{category.name}</td>
                                         <td><span className="default">{category?.hotels|| 0}</span></td>
                                         <td><span className="category" style={{background:category?.category_color|| "#fff" }}>{category?.category_color}</span></td>
                                         <td>{category.description}</td>
-                                        <td></td>
+                                        <td>
+                                            <span style={{float:"left"}} onClick ={ () => setSelectedCategory(category)}>
+                                                    <i className="fa fa-edit"></i>
+                                              </span>
+                                            <span style={{float:"right"}} onClick={() => implementDelete(category, '/categories/delete/')}>
+                                                    <i className="fa fa-trash" style={{color:"red"}}></i>
+                                            </span>
+                                        </td>
                                     </tr>
                                     })
                                     }
@@ -137,7 +183,7 @@ const CategoriesPage = (user: any) => {
                 </div>
             </div>
             <UncoverModal show={showModal}>
-                <CategoriesForm setShowModal={setShowModal}/>
+                <CategoriesForm setShowModal={setShowModal} category={selectedCategory}/>
             </UncoverModal>
         </Home>
         </AdminLayout>

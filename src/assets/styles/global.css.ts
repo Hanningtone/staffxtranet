@@ -139,6 +139,10 @@ export default createGlobalStyle`
         left: calc(50% - 250px);
         overflow: auto;
     }
+
+    textarea.form-control {
+        min-height: 90px;
+    }
     
     @media only screen and (min-width: 280px) {
         .modalx {

@@ -6,6 +6,7 @@ export const getFromLocalStorage = (key) => {
         return null;
     }
     let entry_data = JSON.parse(entry);
+    if(!entry_data) return null;
     let expiry = entry_data.now  + entry_data.ttl;
 
     if (entry_data.ttl && expiry < now()) {
@@ -15,7 +16,7 @@ export const getFromLocalStorage = (key) => {
     return entry_data.value;
 } 
 //will keep item for 10mins where ttl is not provided
-export const setLocalStorage = (key, value, ttl) => {
+export const setLocalStorage = (key, value, ttl=null) => {
 
     window.localStorage.setItem( key, JSON.stringify({
         ttl   : ttl || 60*60*1000,
