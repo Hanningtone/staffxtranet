@@ -53,12 +53,21 @@ const HotelProfilePage = (user: any) => {
     const [showServiceAmenityModal, setShowServiceAmenityModal] = useState(false);
     const [showHotelBasicUpdateModal, setShowHotelBasicUpdateModal] = useState(false);
     const {id} = useParams();
+
+    const [location, setLocation] = useState<any>();
    
 
 
     useEffect(() => {
         dispatch({type:"SET", key:'context', payload:'eventspage'});
     }, [])
+
+     useEffect(() => {
+      if(currentHotel){
+        setLocation(JSON.parse(currentHotel?.location));
+      }
+  
+    }, [currentHotel])
   
     useEffect(() => {
       if(state?.context){
@@ -273,9 +282,9 @@ const HotelProfilePage = (user: any) => {
                                             center={defaultProps.center}
                                             defaultZoom={defaultProps.zoom}>
                                             <AnyReactComponent
-                                            lat={-1.36542 /* JSON.parse(currentHotel?.location)?.lat */}
-                                            lng={40.36542 /* JSON.parse(currentHotel?.location)?.lng */}
-                                            text={"Name place" /* JSON.parse(currentHotel?.location)?.name */}
+                                            lat={location?.lat}
+                                            lng={location?.lng}
+                                            text={location?.name}
                                             />
                                         </GoogleMapReact>
                                     </div>

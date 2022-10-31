@@ -206,7 +206,6 @@ const hotelOnclickHandler = (props : any) => {
                                 <tr>
                                     <td>Name</td>
                                     <td>Total Bookings</td>
-                                    <td>Photos</td>
                                     <td>No of available rooms</td>
                                     <td>Admin Link</td>
                                     <td>Category</td>
@@ -227,14 +226,6 @@ const hotelOnclickHandler = (props : any) => {
                                    
                                         <td> {eachHotel.name} </td>
                                         <td><span> {eachHotel.total_hotels || " No Data for this field"}</span></td>
-                                        <td>
-                                            
-                                            <div className="position-relative">
-                                                <img src={Poster} className='photo1'/>
-                                                <img src={Poster} className='photo2'/>
-                                                <span className='photos-number'>&nbsp; +5</span>
-                                            </div>
-                                        </td>
                                         <td><span className="default">{eachHotel.available_rooms || 0}</span></td>
                                         <td> { eachHotel.admin_link ? <a href="#"> {eachHotel.admin_link} </a> : " No Admin Link !!"} </td>
                                         <td><span className="category">{eachHotel.category || " Unidentified "}</span></td>

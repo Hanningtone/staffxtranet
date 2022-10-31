@@ -11,7 +11,6 @@ const SettingsMenu = (props) => {
                 <hr/>
                 <p> <a href="/categories"><i className="fa fa-th-large"></i> Categories </a></p> 
                 <hr/>
-                <p> <a href="/users"> <i className="fa fa-group"></i> Users</a></p>
             </div>
         </Home>
     )
