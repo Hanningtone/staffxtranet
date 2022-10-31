@@ -21,6 +21,7 @@ import PerkForm from "../components/forms/PerkForm";
 import { confirm } from "react-confirm-box";
 import LoveForm from "../components/forms/LoveForm";
 import ServicesAndAmenitiesForm from "../components/forms/ServicesAndAmenitiesForm";
+import HotelBasicInfoUpdateForm from "../components/forms/HotelBasicInfoUpdateForm";
 
 
 
@@ -50,6 +51,7 @@ const HotelProfilePage = (user: any) => {
     const [showPerkModal, setShowPerkModal] = useState(false);
     const [showLoveModal, setShowLoveModal] = useState(false);
     const [showServiceAmenityModal, setShowServiceAmenityModal] = useState(false);
+    const [showHotelBasicUpdateModal, setShowHotelBasicUpdateModal] = useState(false);
     const {id} = useParams();
    
 
@@ -165,8 +167,8 @@ const HotelProfilePage = (user: any) => {
     return (
         <AdminLayout showSideMenu={true}  user={user}>
             <SubHeader
-             pageTitle="The Social House"
-             pageSubTitle="Hotel short description"
+             pageTitle= {currentHotel?.name}
+             pageSubTitle={ currentHotel?.description }
              btnTxt="Delete Profile"
              onPress = {()=>null}
              showCreateButton = {true}
@@ -227,7 +229,7 @@ const HotelProfilePage = (user: any) => {
                                    <div className="profile-header">
                                        <p>Basic Info</p>
                                        <div className="profile-controls">
-                                           
+                                           <a href="#" onClick = {()=>setShowHotelBasicUpdateModal(true)}><i className="fa fa-edit"></i> Add Info</a>
                                        </div>
                                    </div>
                                    <hr></hr>
@@ -259,9 +261,9 @@ const HotelProfilePage = (user: any) => {
                                 </Profile>
                                 <Profile>
                                     <div className="profile-header">
+
                                         <p>Location - {currentHotel?.name}</p>
                                         <div className="profile-controls">
-                                           <a href="#"><i className="fa fa-edit"></i> Edit</a>
                                         </div>
                                     </div>
                                    <hr></hr>
@@ -271,9 +273,9 @@ const HotelProfilePage = (user: any) => {
                                             center={defaultProps.center}
                                             defaultZoom={defaultProps.zoom}>
                                             <AnyReactComponent
-                                            lat={ -1.2627149}
-                                            lng={36.8023322}
-                                            text="Sankara Hotel"
+                                            lat={-1.36542 /* JSON.parse(currentHotel?.location)?.lat */}
+                                            lng={40.36542 /* JSON.parse(currentHotel?.location)?.lng */}
+                                            text={"Name place" /* JSON.parse(currentHotel?.location)?.name */}
                                             />
                                         </GoogleMapReact>
                                     </div>
@@ -520,6 +522,20 @@ const HotelProfilePage = (user: any) => {
     float: "right", marginTop:-30}}>Cancel</button>
 
         </CustomModalPane>
+
+        <CustomModalPane show={showHotelBasicUpdateModal}
+           title = "Update Hotel"
+           hideThisModal={() => setShowHotelBasicUpdateModal(false)}
+           >
+            { message && <div className={classname}>{message}</div> }
+            <HotelBasicInfoUpdateForm 
+                setShowModal={showHotelBasicUpdateModal}
+
+                />
+                <button className="btn btn-danger" onClick={()=>setShowHotelBasicUpdateModal(false)} style={{float: "right", marginTop:-30}}>Cancel</button>
+
+        </CustomModalPane>
+
      <CustomModalPane show={showHotelBranchModal}
            title = " Create Hotel Branch"
            target = "create-house-rule"
