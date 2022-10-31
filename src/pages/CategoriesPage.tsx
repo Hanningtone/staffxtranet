@@ -101,6 +101,7 @@ const CategoriesPage = (user: any) => {
                                     <td>Total Hotels</td>
                                     <td>Color</td>
                                     <td>Description</td>
+                                    <td>ACtions</td>
                                 </tr>
                             </thead>
                             
@@ -112,6 +113,7 @@ const CategoriesPage = (user: any) => {
                                         <td><span className="default">{category?.hotels|| 0}</span></td>
                                         <td><span className="category" style={{background:category?.category_color|| "#fff" }}>{category?.category_color}</span></td>
                                         <td>{category.description}</td>
+                                        <td></td>
                                     </tr>
                                     })
                                     }
@@ -123,34 +125,6 @@ const CategoriesPage = (user: any) => {
                     </div>
 
                     <div className="col-lg-4">
-                        { selectedCategory && 
-                        <Sidebar>
-                            <div className="field-wrapper">
-                                <div>
-                                    <span>{selectedCategory.name}</span>
-                                </div>
-                                <div className="btnwrapper">
-                                    <button onClick={editSelectedCategory}>Edit</button>
-                                    <button>Delete</button>
-                                </div>
-                            </div>
-                            <hr className="firstchild" />
-                            <div className="field-wrapper">
-                                <span>Category Name:</span>
-                                <span>{selectedCategory.name}</span>
-                            </div>
-                            <hr  />
-                            <div className="field-wrapper">
-                                <span>Color:</span>
-                                <span style={{background: selectedCategory.category_color}}>{selectedCategory.category_color}</span>
-                            </div>
-                            <hr />
-                            <div className="field-wrapper">
-                                <span>Description:</span>
-                                <span >{selectedCategory.description}</span>
-                            </div>
-                        </Sidebar>
-                        }
                         <Sidebar>
                             <div className="field-wrapper">
                                     <div>

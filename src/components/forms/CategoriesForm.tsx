@@ -49,17 +49,17 @@ const CategoriesForm = (props: Props) => {
             </div>) }
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="form-group my-3">
-                    <label htmlFor="hotel-name">Category Title</label>
+                    <label htmlFor="hotel-name">Category Name</label>
                     <input type="text" className="form-control" id="categoryName" 
                             aria-invalid={errors.name ? "true" : "false"}
-                            {...register('name', { required: true})}/>
+                            {...register('name', { required: true})}  placeholder="Enter Category Name"/>
                      {errors.name && (
                             <span role="alert" className="form-alert">Enter category name</span>
                      )}
                 </div>
                 <div className="form-group my-3">
                     <label htmlFor="hotel-name">Description</label>
-                    <textarea className="form-control" id="description" { ...register('description', {required:true})} rows={6}></textarea>
+                    <textarea className="form-control" id="description"  placeholder="Describe this Category" { ...register('description', {required:true})} rows={6}></textarea>
                      {errors.description && (
                             <span role="alert" className="form-alert">Category description is required</span>
                      )}

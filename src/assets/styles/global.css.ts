@@ -132,6 +132,13 @@ export default createGlobalStyle`
         top: 0;
         background-color: rgba(0,0,0,0.5);
     }
+
+    .modalx {
+        width: 500px;
+        max-height: 400px;
+        left: calc(50% - 250px);
+        overflow: auto;
+    }
     
     @media only screen and (min-width: 280px) {
         .modalx {
