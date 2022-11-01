@@ -17,11 +17,13 @@ import BusinessBranchesForm from "../components/forms/BusinessBranchesForm";
 import { TiDelete } from 'react-icons/ti'
 import { RiDeleteBin2Line } from 'react-icons/ri'
 import HotelPhotoForm from "../components/forms/HotelPhotoForm";
+import { AiOutlineClose } from 'react-icons/ai'
 import PerkForm from "../components/forms/PerkForm";
 import { confirm } from "react-confirm-box";
 import LoveForm from "../components/forms/LoveForm";
 import ServicesAndAmenitiesForm from "../components/forms/ServicesAndAmenitiesForm";
 import HotelBasicInfoUpdateForm from "../components/forms/HotelBasicInfoUpdateForm";
+import { ZIndexes } from "office-ui-fabric-react";
 
 
 
@@ -44,7 +46,7 @@ const HotelProfilePage = (user: any) => {
     const [showHouseRulesModal, setShowHouseRuelsMOdal] = useState(false);
     const [state, dispatch] = useContext<any>(Context)
     const [classname, setClassname] = useState('success');
-    const [message, setMessage] = useState();
+    const [message, setMessage] = useState("");
     const [currentHotel, setCurrentHotel] = useState<any>();
     const [showPhotoModal, setShowPhotoModal] = useState(false);
     const [modalTitle, setModalTitle] = useState("");
@@ -95,6 +97,8 @@ const HotelProfilePage = (user: any) => {
             ([status, result]) => {
               if (status !== 204) {
                 dispatch({type:"SET", key:"page", payload: state?.page === 1? 0 : 1});
+                setMessage(" Good !!")
+                
               } else {
                 setError(result?.message || "Error, failed to delete record");
               }
@@ -131,7 +135,6 @@ const HotelProfilePage = (user: any) => {
   /** */  }
 
     useEffect(()=> {
-        console.log("Running page again with state", state?.page);
         fetchHotelDetials();
     }, [state?.page])
 
@@ -296,10 +299,12 @@ const HotelProfilePage = (user: any) => {
                                           return (
                                           
                                 
-                                          <div className="profile-photo business-photo"><img src={photo.url_path} alt=" Nothing to show " />
-                                           <span style={{float:"right"}} onClick={() => implementDelete(photo, '/business-photos/delete/')}>
-                                                    <i className="fa fa-trash" style={{color:"red"}}></i>
-                                           </span>
+                                          <div className="profile-photo business-photo"> 
+                                          <div style={{float:"right" }} onClick={() => implementDelete(photo, '/business-photos/delete/')}>
+                                                    <i className="fa " style={{color:"red"}}> < AiOutlineClose /> </i>
+                                           </div>
+                                          <img src={photo.url_path} alt=" Nothing to show " />
+                                           
                                            
                                           </div>)
                                         })

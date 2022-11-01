@@ -9,6 +9,7 @@ interface Props {
     setShowModal: any
 }
 
+
 const HotelBasicInfoUpdateForm = (props: Props) => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();

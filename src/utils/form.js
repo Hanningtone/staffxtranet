@@ -582,7 +582,7 @@ export const LoadForm = (formSchema, submitLabel, endpoint,
    const onSubmit = (values, { setSubmitting,  resetForm, setStatus, setErrors}) => {
     console.log("Calling on submit funtion wih encytype", enctype);
        setIsError(null);
-       console.log("Sumnitting values", values);
+       console.log("Submitting values", values);
 
        makeRequest({url:endpoint, method:"post", data:values, enctype:enctype}).then(([status, result]) => {
            console.log("Result is ", result, "status is ", status);
@@ -609,13 +609,10 @@ export const LoadForm = (formSchema, submitLabel, endpoint,
                 console.log("Dispatching state page  ", state?.page)
                 dispatch({type:"SET", key:"page", payload: state?.page == 1 ? 0: 1});
                 //result
-
-                console.log("Should have some state already ", state?.page)
            } 
            setSubmitting(false);
        });
    }
-   
 
    return ( 
        <Form
