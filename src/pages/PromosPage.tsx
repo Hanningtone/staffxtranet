@@ -14,6 +14,8 @@ import makeRequest from "../utils/fetch-request";
 import DataTable from "../utils/table";
 import PromtionsForm from "../components/forms/PromotionsForm";
 import CustomModalPane from "../utils/_modal";
+import { confirm } from "react-confirm-box";
+
 
 const PromosPage = (user: any) => {
 
@@ -26,6 +28,8 @@ const PromosPage = (user: any) => {
     const [message, setMessage] = useState();
     const [classname, setClassname] = useState('success');
     const [selectedPromo, setSelectedPromo] = useState<any>();
+    const [modalTitle, setModalTitle] = useState("Create Promo");
+    const [modalLabel, setModalLabel] = useState("Create Promo");
 
 
 
@@ -66,15 +70,67 @@ const PromosPage = (user: any) => {
 
     useEffect(()=>{
         fetchPromotions();
-    }, [fetchPromotions])
+    }, [state?.page])
+
+
+    const deactivateRecord = async (rule:any, endpoint: any, data:any) => {
+        const options = {
+          labels: {
+            confirmable: "Confirm",
+            cancellable: "Cancel"
+          },
+          classNames: {confirmButton: "btn btn-danger", cancelButton:"btn btn-warning"}
+        }
+
+       const confirmed = await confirm("You are about to deactivate this record. Proceed?", options);
+       if (confirmed) {
+
+
+          let _url = endpoint+ rule.id;
+          console.log("you click Yesss..to update.", data)
+
+
+          makeRequest({ url: _url, method: "post", data: data }).then(
+            ([status, result]) => {
+                console.log(status, result)
+              if (status !== 204) {
+                dispatch({type:"SET", key:"page", payload: state?.page === 1? 0 : 1});
+              } else {
+                setError(result?.message || "Error, failed to delete record");
+              }
+            }
+          );
+       }
+       console.log("You click No!");
+    }
+    const implementDeactivate = (record:any, endpoint : any, data:any) => {
+        deactivateRecord(record, endpoint, data);
+    }
 
     const showModalForm = (show: boolean) =>{
         setShowModal(show);
     }
 
-    const editSelectedCategory = () => {
+    const changeModalTitle = () =>{
+        setModalTitle("Create Promotion");
+        setModalLabel("Create Promotion");
+
+    }
+
+    const editSelectedPromo = () => {
         showModalForm(!showModal);
     }
+
+    useEffect(() => {
+        if(selectedPromo) {
+           showModalForm(!showModal);
+           setModalTitle("Update Promo");
+           setModalLabel("Update Promotion");
+        }
+        else {
+            setModalTitle("Create Promo");
+        }
+    }, [selectedPromo]);
 
     return(
         <AdminLayout showSideMenu={true}  user={user}>
@@ -83,7 +139,7 @@ const PromosPage = (user: any) => {
              pageTitle="Promos"
              pageSubTitle="Promotions"
              btnTxt = "Create new Promo"
-             onPress = {()=>showModalForm(!showModal)}
+             onPress = {()=>{showModalForm(!showModal);changeModalTitle();}}
              showCreateButton = {true}
             />
             <div className="container-fluid">
@@ -95,7 +151,7 @@ const PromosPage = (user: any) => {
                         <tr>
                             <td>Title</td>
                             <td>Narration</td>
-                            <td>Amount DIscounted</td>
+                            <td>Maximum Discount Amt</td>
                             <td>% Discount</td>
                             <td>Start Date</td>
                             <td>End Date</td>
@@ -117,7 +173,7 @@ const PromosPage = (user: any) => {
                                             <span style={{float:"left"}} onClick ={ () => setSelectedPromo(promotion)}>
                                                     <i className="fa fa-edit"></i>
                                               </span>
-                                            <span style={{float:"right"}} onClick={() => implementDelete(promotion, '/promotions/delete/')}>
+                                            <span style={{float:"right"}} onClick={() => implementDeactivate(promotion, '/promotions/update/', {narration:"Tuse te updatedshit"})}>
                                                     <i className="fa fa-trash" style={{color:"red"}}></i>
                                             </span>
                                         </td>
@@ -135,15 +191,15 @@ const PromosPage = (user: any) => {
 
         <CustomModalPane
                 show={showModal}
-                title=" Create Promotion"
+                title={modalTitle}
                 target="create-user"
                 hideThisModal={() => setShowModal(false)}
               >
                 {message && <div className={classname}>{message}</div>}
-                <PromtionsForm setShowModal={showModal} />
+                <PromtionsForm setShowModal={setShowModal} promotion={selectedPromo} label = {modalLabel}/>
               </CustomModalPane>
 
-            
+
         </Home>
         </AdminLayout>
     )
