@@ -30,6 +30,7 @@ const PromosPage = (user: any) => {
     const [selectedPromo, setSelectedPromo] = useState<any>();
     const [modalTitle, setModalTitle] = useState("Create Promo");
     const [modalLabel, setModalLabel] = useState("Create Promo");
+    
 
 
 
@@ -73,16 +74,32 @@ const PromosPage = (user: any) => {
     }, [state?.page])
 
     
-    const deactivateRecord = async (rule:any, endpoint: any, data:any) => {
+    const confirmBtnClass = (action) => {
+        if (action === "activate"){
+            return "btn btn-success";
+        }
+        return "btn btn-danger";
+    }
+    const confirmText = (action) => {
+        if (action === "activate"){
+            return "Your are about to activate this record. Proceed?";
+        }
+        return "Your are about to deactivate this record. Proceed?";
+    }
+    const deactivateRecord = async (rule:any, endpoint: any, data:any, action:any) => {
+        console.log("acccctionnnnnnnnn",action);
+        
+        
         const options = {
           labels: {
             confirmable: "Confirm",
             cancellable: "Cancel"
           },
-          classNames: {confirmButton: "btn btn-danger", cancelButton:"btn btn-warning"}
+          classNames: {confirmButton: confirmBtnClass(action), cancelButton:"btn btn-warning"}
         }
 
-       const confirmed = await confirm("You are about to deactivate this record. Proceed?", options);
+
+       const confirmed = await confirm(confirmText(action), options);
        if (confirmed) {
 
 
@@ -102,8 +119,8 @@ const PromosPage = (user: any) => {
        }
        console.log("You click No!");
     }
-    const implementDeactivate = (record:any, endpoint : any, data:any) => {
-        deactivateRecord(record, endpoint, data);
+    const implementDeactivate = (record:any, endpoint : any, data:any, action:any) => {
+        deactivateRecord(record, endpoint, data, action);
     }
 
     const showModalForm = (show: boolean) =>{
@@ -128,12 +145,12 @@ const PromosPage = (user: any) => {
 
     const loadActivator = (promotion) => {
         if (promotion.status === "active") {
-            return <span style={{float:"right"}} onClick={() => implementDeactivate(promotion, '/promotions/update/', {status:"deactivated"})}><i className="fa fa-ban" style={{color:"red"}}></i></span>
+            return <span style={{float:"right"}} onClick={() => implementDeactivate(promotion, '/promotions/update/', {status:"deactivated"}, "deactivate")}><i className="fa fa-ban" style={{color:"red"}}></i></span>
         }
 
         else 
         {
-        return <span style={{float:"right"}} onClick={() => implementDeactivate(promotion, '/promotions/update/', {status:"activate"})}><i className="fa fa-plus" style={{color:"#444",}}></i></span>}
+        return <span style={{float:"right"}} onClick={() => implementDeactivate(promotion, '/promotions/update/', {status:"active"}, "activate")}><i className="fa fa-plus" style={{color:"#444",}}></i></span>}
     }
 
 
