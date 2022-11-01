@@ -366,4 +366,8 @@ table thead.thead-light.green{
     color: #ffffff;
   }
 
+  .deactivated {
+    opacity: 0.6;
+  }
+
      `;

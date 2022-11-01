@@ -72,7 +72,7 @@ const PromosPage = (user: any) => {
         fetchPromotions();
     }, [state?.page])
 
-
+    
     const deactivateRecord = async (rule:any, endpoint: any, data:any) => {
         const options = {
           labels: {
@@ -87,7 +87,6 @@ const PromosPage = (user: any) => {
 
 
           let _url = endpoint+ rule.id;
-          console.log("you click Yesss..to update.", data)
 
 
           makeRequest({ url: _url, method: "post", data: data }).then(
@@ -120,6 +119,24 @@ const PromosPage = (user: any) => {
     const editSelectedPromo = () => {
         showModalForm(!showModal);
     }
+
+    const loadEditor = (promotion) => {
+        if (promotion.status === "active") {
+            return <span style={{float:"left"}} onClick ={ () => setSelectedPromo(promotion)}><i className="fa fa-edit"></i></span>
+        }else {return ""}
+    }
+
+    const loadActivator = (promotion) => {
+        if (promotion.status === "active") {
+            return <span style={{float:"right"}} onClick={() => implementDeactivate(promotion, '/promotions/update/', {status:"deactivated"})}><i className="fa fa-ban" style={{color:"red"}}></i></span>
+        }
+
+        else 
+        {
+        return <span style={{float:"right"}} onClick={() => implementDeactivate(promotion, '/promotions/update/', {status:"activate"})}><i className="fa fa-plus" style={{color:"#444",}}></i></span>}
+    }
+
+
 
     useEffect(() => {
         if(selectedPromo) {
@@ -155,6 +172,7 @@ const PromosPage = (user: any) => {
                             <td>% Discount</td>
                             <td>Start Date</td>
                             <td>End Date</td>
+                            <td>Status</td>
                             <td>Actions</td>
                         </tr>
                     </thead>
@@ -162,20 +180,18 @@ const PromosPage = (user: any) => {
                             {promotions && (
                                 <tbody>
                                     {promotions.map((promotion:any) => {
-                                     return  <tr>
+                                     return  <tr className={promotion.status}>
                                         <td>{promotion?.title}</td>
                                         <td>{promotion?.narration}</td>
                                         <td>{promotion?.amount_discounted}</td>
                                         <td>{promotion?.percentage_discount}</td>
                                         <td>{promotion?.start_date}</td>
                                         <td>{promotion.end_date}</td>
+                                        <td>{promotion.status}</td>
                                         <td>
-                                            <span style={{float:"left"}} onClick ={ () => setSelectedPromo(promotion)}>
-                                                    <i className="fa fa-edit"></i>
-                                              </span>
-                                            <span style={{float:"right"}} onClick={() => implementDeactivate(promotion, '/promotions/update/', {status:"deactivated"})}>
-                                                    <i className="fa fa-trash" style={{color:"red"}}></i>
-                                            </span>
+                                            {loadEditor(promotion)}
+                                            {loadActivator(promotion)}
+                                            
                                         </td>
                                     </tr>
                                     })
