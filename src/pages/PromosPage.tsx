@@ -173,7 +173,7 @@ const PromosPage = (user: any) => {
                                             <span style={{float:"left"}} onClick ={ () => setSelectedPromo(promotion)}>
                                                     <i className="fa fa-edit"></i>
                                               </span>
-                                            <span style={{float:"right"}} onClick={() => implementDeactivate(promotion, '/promotions/update/', {narration:"Tuse te updatedshit"})}>
+                                            <span style={{float:"right"}} onClick={() => implementDeactivate(promotion, '/promotions/update/', {status:"deactivated"})}>
                                                     <i className="fa fa-trash" style={{color:"red"}}></i>
                                             </span>
                                         </td>
