@@ -14,6 +14,8 @@ import makeRequest from "../utils/fetch-request";
 import DataTable from "../utils/table";
 import PromtionsForm from "../components/forms/PromotionsForm";
 import CustomModalPane from "../utils/_modal";
+import { confirm } from "react-confirm-box";
+
 
 const PromosPage = (user: any) => {
 
@@ -25,6 +27,10 @@ const PromosPage = (user: any) => {
     const [error, setError] = useState(null);
     const [message, setMessage] = useState();
     const [classname, setClassname] = useState('success');
+    const [selectedPromo, setSelectedPromo] = useState<any>();
+    const [modalTitle, setModalTitle] = useState("Create Promo");
+    const [modalLabel, setModalLabel] = useState("Create Promo");
+
 
 
 
@@ -64,79 +70,136 @@ const PromosPage = (user: any) => {
 
     useEffect(()=>{
         fetchPromotions();
-    }, [fetchPromotions])
+    }, [state?.page])
+
+
+    const deactivateRecord = async (rule:any, endpoint: any, data:any) => {
+        const options = {
+          labels: {
+            confirmable: "Confirm",
+            cancellable: "Cancel"
+          },
+          classNames: {confirmButton: "btn btn-danger", cancelButton:"btn btn-warning"}
+        }
+
+       const confirmed = await confirm("You are about to deactivate this record. Proceed?", options);
+       if (confirmed) {
+
+
+          let _url = endpoint+ rule.id;
+          console.log("you click Yesss..to update.", data)
+
+
+          makeRequest({ url: _url, method: "post", data: data }).then(
+            ([status, result]) => {
+                console.log(status, result)
+              if (status !== 204) {
+                dispatch({type:"SET", key:"page", payload: state?.page === 1? 0 : 1});
+              } else {
+                setError(result?.message || "Error, failed to delete record");
+              }
+            }
+          );
+       }
+       console.log("You click No!");
+    }
+    const implementDeactivate = (record:any, endpoint : any, data:any) => {
+        deactivateRecord(record, endpoint, data);
+    }
 
     const showModalForm = (show: boolean) =>{
         setShowModal(show);
     }
+
+    const changeModalTitle = () =>{
+        setModalTitle("Create Promotion");
+        setModalLabel("Create Promotion");
+
+    }
+
+    const editSelectedPromo = () => {
+        showModalForm(!showModal);
+    }
+
+    useEffect(() => {
+        if(selectedPromo) {
+           showModalForm(!showModal);
+           setModalTitle("Update Promo");
+           setModalLabel("Update Promotion");
+        }
+        else {
+            setModalTitle("Create Promo");
+        }
+    }, [selectedPromo]);
+
     return(
         <AdminLayout showSideMenu={true}  user={user}>
         <Home>
             <SubHeader
              pageTitle="Promos"
-             pageSubTitle="Referal Codes and Promotions"
+             pageSubTitle="Promotions"
              btnTxt = "Create new Promo"
-             onPress = {()=>showModalForm(!showModal)}
+             onPress = {()=>{showModalForm(!showModal);changeModalTitle();}}
              showCreateButton = {true}
             />
             <div className="container-fluid">
-          <div className="row pe-1">
-              <div className="col-lg-6">
+            <div className="row pe-1">
+              <div className="col-lg-12">
 
-                  <DataTable data = {promotions }/>
+                  <table>
+                    <thead className="thead-light green">
+                        <tr>
+                            <td>Title</td>
+                            <td>Narration</td>
+                            <td>Maximum Discount Amt</td>
+                            <td>% Discount</td>
+                            <td>Start Date</td>
+                            <td>End Date</td>
+                            <td>Actions</td>
+                        </tr>
+                    </thead>
+                            
+                            {promotions && (
+                                <tbody>
+                                    {promotions.map((promotion:any) => {
+                                     return  <tr>
+                                        <td>{promotion?.title}</td>
+                                        <td>{promotion?.narration}</td>
+                                        <td>{promotion?.amount_discounted}</td>
+                                        <td>{promotion?.percentage_discount}</td>
+                                        <td>{promotion?.start_date}</td>
+                                        <td>{promotion.end_date}</td>
+                                        <td>
+                                            <span style={{float:"left"}} onClick ={ () => setSelectedPromo(promotion)}>
+                                                    <i className="fa fa-edit"></i>
+                                              </span>
+                                            <span style={{float:"right"}} onClick={() => implementDeactivate(promotion, '/promotions/update/', {status:"deactivated"})}>
+                                                    <i className="fa fa-trash" style={{color:"red"}}></i>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    })
+                                    }
+                                </tbody>
+                            )
+                            }
+
+                        </table>
               </div>
-              <div className="col-lg-4">
-                        <Sidebar>
-                                <div className="field-wrapper">
-                                    <div>
-                                            <span className="h4">Your Profile</span>
-                                    </div>
-                                    <div className="btnwrapper">
-                                            <button>Change Details</button>
-                                    </div>
-                                </div>
-                                <hr className="firstchild" />
-                                <div className="field-wrapper">
-                                    <span className="h5">Name: </span>
-                                    <span>{user?.first_name} &nbsp; {user?.last_name}</span>
-                                </div>
-                                <hr  />
-                                <div className="field-wrapper">
-                                    <span className="h5">Email : </span>
-                                    <span> { user?.email } </span>
-                                </div>
-                                <hr />
-                                <div className="field-wrapper">
-                                    <span className="h5">Phone Number : </span>
-                                    <span > { user?.phone_number } </span>
-                                </div>
-                               
-                            </Sidebar>
-                            <Sidebar>
-                               <div className="field-wrapper">
-                                    <div>
-                                        <span><strong>My Businesses </strong></span>
-
-                                    </div>
-                                </div>
-
-                                <hr className="firstchild" />
-
-                                
-                            </Sidebar>
-                    </div>
-          </div>
-        </div>
+                        </div>
+            </div>
 
         <CustomModalPane
                 show={showModal}
-                title=" Create Promotion"
+                title={modalTitle}
                 target="create-user"
                 hideThisModal={() => setShowModal(false)}
               >
                 {message && <div className={classname}>{message}</div>}
-                <PromtionsForm setShowModal={showModal} />
+                <PromtionsForm setShowModal={setShowModal} promotion={selectedPromo} label = {modalLabel}/>
               </CustomModalPane>
+
+
         </Home>
         </AdminLayout>
     )

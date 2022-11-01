@@ -13,6 +13,8 @@ export default createGlobalStyle`
     margin: 0;
     height: 100%;
   }
+
+
  .bg-c {
      background:#fff;
      table th {
@@ -131,6 +133,17 @@ export default createGlobalStyle`
         left: 0;
         top: 0;
         background-color: rgba(0,0,0,0.5);
+    }
+
+    .modalx {
+        width: 500px;
+        max-height: 400px;
+        left: calc(50% - 250px);
+        overflow: auto;
+    }
+
+    textarea.form-control {
+        min-height: 90px;
     }
     
     @media only screen and (min-width: 280px) {
@@ -343,5 +356,14 @@ export default createGlobalStyle`
     padding-bottom: 7px;
     font-size: 18px;
 }
+
+table thead.thead-light.green {
+    backgound: rgb(0, 108, 103);
+    color: #ffffff;
+  }
+table thead.thead-light.green{
+    background: rgb(24, 135, 84);
+    color: #ffffff;
+  }
 
      `;

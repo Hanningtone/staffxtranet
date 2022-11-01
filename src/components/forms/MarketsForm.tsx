@@ -13,15 +13,23 @@ interface Props {
 }
 
 const CategoriesForm = (props: Props) => {
+    const { market } = props;
     const [ state, dispatch ] =  useContext(Context);
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [responseMessage, setResponseMessages] = useState<any>();
+    const [label, setLabel] = useState<string>("Create Market");
 
     const handleSelect = (country: any) => {
     }
 
     const onSubmit = (values: any) => {
-        let endpoint = '/markets/create';
+        let endpoint;
+
+        if(!market) {
+             endpoint = '/market/create';
+        } else {
+             endpoint = '/market/update/' + market.id;
+        }
         
         makeRequest({url:endpoint, method:"post", data:values}).then(([status, result]) => {
             console.log("Result is ", result, "status is ", status);
@@ -41,17 +49,28 @@ const CategoriesForm = (props: Props) => {
         });
     }
 
+    useEffect(() => {
+        if(!market) {
+           setLabel("Create market");
+        }
+        else {
+            setLabel("Update Market");
+        }
+    }, [market]);
+
     return(
         <FormWrapper>
-        { responseMessage?.status === true && (<div className = {
-             `alert alert-${responseMessage?.status === true ? 'success': 'danger'}`} role="alert">
-              {responseMessage?.message} 
-            </div>) }
+        
             <form onSubmit={handleSubmit(onSubmit)}>
+                <div className="modal-header modal-header"><h5 class="modal-title" id="default-modal-pane">{label}</h5><button type="button" class="btn btn-outline-danger" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" onClick={()=>props.setShowModal()}>×</span></button></div>
+                    { responseMessage?.status === true && (<div className = {
+                 `alert alert-${responseMessage?.status === true ? 'success': 'danger'}`} role="alert">
+                  {responseMessage?.message} 
+                </div>) }
                 <div className="form-group my-3">
                     <label htmlFor="hotel-name">Market Title</label>
                     <input type="text" className="form-control" id="marketName" aria-invalid={errors.categoryName ? "true" : "false"}
-                    {...register('market_name', { required: true})}/>
+                    {...register('market_name', { required: true})} defaultValue={market?.market_name} placeholder="Enter Name"/>
                      {errors.market_name && (
                         <span role="alert" className="form-alert">Enter market name</span>
                      )}
@@ -65,8 +84,8 @@ const CategoriesForm = (props: Props) => {
                 </div>
                 <div className="form-group my-3">
                     <label htmlFor="hotel-name">City/Town/Region</label>
-                    <input type="text" className="form-control" id="city" 
-                     {...register('city', { required: true})}/>
+                    <input type="text" className="form-control" defaultValue={market?.city} id="city" 
+                     {...register('city', { required: true})} placeholder="Enter city/town/region"/>
                      {errors.city && (
                         <span role="alert" className="form-alert">Enter city</span>
                      )}

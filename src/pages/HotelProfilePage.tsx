@@ -55,12 +55,21 @@ const HotelProfilePage = (user: any) => {
     const [showServiceAmenityModal, setShowServiceAmenityModal] = useState(false);
     const [showHotelBasicUpdateModal, setShowHotelBasicUpdateModal] = useState(false);
     const {id} = useParams();
+
+    const [location, setLocation] = useState<any>();
    
 
 
     useEffect(() => {
         dispatch({type:"SET", key:'context', payload:'eventspage'});
     }, [])
+
+     useEffect(() => {
+      if(currentHotel){
+        setLocation(JSON.parse(currentHotel?.location));
+      }
+  
+    }, [currentHotel])
   
     useEffect(() => {
       if(state?.context){
@@ -276,9 +285,9 @@ const HotelProfilePage = (user: any) => {
                                             center={defaultProps.center}
                                             defaultZoom={defaultProps.zoom}>
                                             <AnyReactComponent
-                                            lat={-1.36542 /* JSON.parse(currentHotel?.location)?.lat */}
-                                            lng={40.36542 /* JSON.parse(currentHotel?.location)?.lng */}
-                                            text={"Name place" /* JSON.parse(currentHotel?.location)?.name */}
+                                            lat={location?.lat}
+                                            lng={location?.lng}
+                                            text={location?.name}
                                             />
                                         </GoogleMapReact>
                                     </div>
@@ -327,7 +336,6 @@ const HotelProfilePage = (user: any) => {
                                             <>
                                           <div className="profile-list">
                                              <p><i className="fa fa-check-square"></i><span> {narration.narration} </span> </p>
-
                                              <span style={{float:"right"}} onClick={() => implementDelete(narration, '/whyweloveit/delete/')}>
                                                     <i className="fa fa-trash" style={{color:"red"}}></i>
                                               </span>
@@ -765,3 +773,4 @@ const Profile = styled.div`{
     `
 
 export default HotelProfilePage;
+

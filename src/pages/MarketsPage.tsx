@@ -12,6 +12,7 @@ import { AdminLayout,
  import { useEffect, useCallback, useState, useContext  } from 'react';
  import makeRequest from "../utils/fetch-request";
  import { Context } from "../context";
+ import { confirm } from "react-confirm-box";
 
 
 
@@ -26,10 +27,49 @@ const MarketsPage = (user: any) => {
     const [catData, setCatData] = useState();
     const [token, setToken] = useState();
 
+    const deactivateRecord = async (rule:any, endpoint: any) => {
+        const options = {
+          labels: {
+            confirmable: "Deactivate",
+            cancellable: "Cancel"
+          },
+          classNames: {confirmButton: "btn btn-danger", cancelButton:"btn btn-warning"}
+        }
+
+       const confirmed = await confirm("You are about to Deactvate this record,?", options);
+       if (confirmed) {
+
+          let _url = endpoint+ rule.id;
+
+          makeRequest({ url: _url, method: "update", data: {status:"deactivated"} }).then(
+            ([status, result]) => {
+              if (status !== 204) {
+                dispatch({type:"SET", key:"page", payload: state?.page === 1? 0 : 1});
+              } else {
+                setError(result?.message || "Error, failed to update record");
+              }
+            }
+          );
+       }
+       console.log("You click No!");
+    }
+    const implementDelete = (record:any, endpoint : any) => {
+        deleteRecord(record, endpoint);
+    }
+
     const showModalForm = (show: boolean) =>{
         setShowModal(show);
     }
 
+    const editSelectedMkt = () => {
+        showModalForm(!showModal);
+    }
+
+    useEffect(() => {
+        if(selectedMkt) {
+           showModalForm(!showModal);
+        }
+    }, [selectedMkt]);
 
     const data = {
         labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
@@ -50,10 +90,6 @@ const MarketsPage = (user: any) => {
         ]
     };
 
-    const editSelectedMarket = () => {
-        showModalForm(!showModal);
-    }
-
     const fetchMarkets = () => {
         let _url = "/market/get";
     
@@ -68,23 +104,22 @@ const MarketsPage = (user: any) => {
         );
       };
 
-    useEffect(() => {
-        if(markets) {
-            setSelectedMkt(markets[0]);
-        }
-    }, [markets])
-
+    
     useEffect(() => {
         dispatch({type:"SET", key:'context', payload:'marketspage'});
         fetchMarkets();
     }, [])
+
+    useEffect(() => {
+        fetchMarkets();
+    }, [state?.page])
 
     return(
         <AdminLayout showSideMenu={true} user={user}>
         <Home>
             <SubHeader
              pageTitle="Markets"
-             pageSubTitle="200 hotel on Uncover"
+             pageSubTitle={<div style={{backgroundColor:"#0d6efd", color:"white", borderRadius:"50%", width: "30px",height:"30px",textAlign:"center",lineHeight:"30px"}}>{markets?.length}</div>}
              btnTxt="Create new market"
              onPress = {()=>showModalForm(!showModal)}
              showCreateButton = {true}
@@ -96,28 +131,37 @@ const MarketsPage = (user: any) => {
                     </div>
                     <div className="col-lg-6">
                         <table>
-                            <thead>
+                            <thead className="thead-light green">
                                 <tr>
+                                    <td>Market Name</td>
                                     <td>Country</td>
                                     <td>City</td>
-                                    <td>Market Name</td>
                                     <td>Total Hotels</td>
                                     <td>Rooms</td>
                                     <td>Bookings</td>
+                                    <td>Actions</td>
                                 </tr>
                             </thead>
                             <tbody>
 
                                { markets && markets?.map((market:any) => {  
                                     return (
-                                        <tr onClick={() => setSelectedMkt(market)}>
-                                            
+                                        <tr>
+                                            <td>{market.market_name}</td>
                                             <td>{market.country}</td>
                                             <td>{market.city}</td>
-                                            <td>{market.market_name}</td>
                                             <td><span className="default">{market?.hotels || 0}</span></td>
                                             <td><span className="default">{market?.rooms || 0}</span></td>
                                             <td><span className="default">{market?.bookings || 0}</span></td>
+                                            <td><span className="default">
+                                                <span style={{float:"left"}} onClick ={ () => setSelectedMkt(market)}>
+                                                    <i className="fa fa-edit"></i>
+                                              </span>
+
+                                              {/* <span style={{float:"right"}} onClick={() => implementDelete(market, '/market/delete/')}>
+                                                <i className="fa fa-trash" style={{color:"red"}}></i>
+                                            </span> */}
+                                            </span></td>
                                         </tr>
                                     )
                                 })
@@ -127,43 +171,19 @@ const MarketsPage = (user: any) => {
                     </div>
 
                     <div className="col-lg-4">
-                        {selectedMkt && (
-                            <Sidebar>
-                                <div className="field-wrapper">
-                                    <div>
-                                            <span>{selectedMkt?.market_name}</span>
-                                    </div>
-                                    <div className="btnwrapper">
-                                            <button onClick={editSelectedMarket}>Edit</button>
-                                            <button >Delete</button>
-                                    </div>
+                        <Sidebar>
+                            <div className="field-wrapper">
+                                <div>
+                                   <span><strong>Markets Activities</strong></span>
                                 </div>
-                                <hr className="firstchild" />
-                                <div className="field-wrapper">
-                                    <span>County:</span>
-                                    <span>{selectedMkt?.country}</span>
-                                </div>
-                                <hr  />
-                                <div className="field-wrapper">
-                                    <span>City:</span>
-                                    <span>{selectedMkt?.city}</span>
-                                </div>
-                               
-                            </Sidebar>)
-                        }
-                            <Sidebar>
-                               <div className="field-wrapper">
-                                    <div>
-                                        <span><strong>Markets Activities</strong></span>
-                                    </div>
-                                </div>
-                                <LineChart data={data}/>
-                            </Sidebar>
+                            </div>
+                            <LineChart data={data}/>
+                        </Sidebar>
                     </div>
                 </div>
             </div>
             <UncoverModal show={showModal}>
-                <MarketsForm setShowModal={setShowModal}/>
+                <MarketsForm setShowModal={setShowModal} market={selectedMkt}/>
             </UncoverModal>
         </Home>
         </AdminLayout>
