@@ -18,13 +18,14 @@ import { TiDelete } from 'react-icons/ti'
 import { RiDeleteBin2Line } from 'react-icons/ri'
 import HotelPhotoForm from "../components/forms/HotelPhotoForm";
 import { AiOutlineClose } from 'react-icons/ai'
+import { BsPersonCheck } from 'react-icons/bs'
+import { MdOutlinePersonOff } from 'react-icons/md'
 import PerkForm from "../components/forms/PerkForm";
 import { confirm } from "react-confirm-box";
 import LoveForm from "../components/forms/LoveForm";
 import ServicesAndAmenitiesForm from "../components/forms/ServicesAndAmenitiesForm";
 import HotelBasicInfoUpdateForm from "../components/forms/HotelBasicInfoUpdateForm";
 import { ZIndexes } from "office-ui-fabric-react";
-
 
 
 const AnyReactComponent = ({ text }: any) => 
@@ -87,7 +88,9 @@ const HotelProfilePage = (user: any) => {
   
     }, [state?.eventspage])
 
-    const deleteRecord = async (rule:any, endpoint: any) => {
+
+
+    const deleteRecord = async (record:any, endpoint: any) => {
         const options = {
           labels: {
             confirmable: "Confirm",
@@ -100,7 +103,7 @@ const HotelProfilePage = (user: any) => {
        if (confirmed) {
          console.log("You click yes!");
 
-          let _url = endpoint+ rule.id;
+          let _url = endpoint+ record.id;
 
           makeRequest({ url: _url, method: "delete", data: null }).then(
             ([status, result]) => {
@@ -117,8 +120,71 @@ const HotelProfilePage = (user: any) => {
        console.log("You click No!");
     }
 
-    const implementDelete = (record:any, endpoint : any) => {
-        deleteRecord(record, endpoint);
+
+
+
+
+
+    const deactivateRecord = async (record:any, endpoint: any, data : any, action : any) => {
+        console.log(" This is who the fuck I am", record.id)
+        const options = {
+          labels: {
+            confirmable: "Confirm",
+            cancellable: "Cancel"
+          },
+          classNames: {confirmButton: confirmBtnClass(action), cancelButton:"btn btn-warning" }
+        }
+
+       const confirmed = await confirm(confirmText(action), options);
+       if (confirmed) {
+         console.log("You click yes!");
+
+          let _url = endpoint+ record.id;
+
+          makeRequest({ url: _url, method: "post", data: data }).then(
+            ([status, result]) => {
+              if (status !== 204) {
+                dispatch({type:"SET", key:"page", payload: state?.page === 1? 0 : 1});
+                setMessage(" Good !!")
+                
+              } else {
+                setError(result?.message || "Error, failed to delete record");
+              }
+            }
+          );
+       }
+       console.log("You click No!");
+    }
+
+     const confirmBtnClass = (action : any) => {
+        if (action === "activate"){
+            return "btn btn-success";
+        }
+        return "btn btn-danger";
+    }
+
+    
+    
+      
+    const confirmText = (action : any) => {
+        if (action === "activate"){
+            return "Your are about to activate this record. Proceed?";
+        }
+        return "Your are about to deactivate this record. Proceed?";
+    }
+
+
+
+    const implementDelete = (record: any, endpoint : any) => {
+        deleteRecord(record, endpoint)
+    
+
+
+
+    }    
+     
+    const implementUpdate = (record:any, endpoint : any, data : any, action : any ) => {
+        deactivateRecord(record, endpoint, data, action);
     }
 
 
@@ -212,6 +278,7 @@ const HotelProfilePage = (user: any) => {
                                         </div>
                                     </div>
                             </div>
+
                             <div className="col-lg-3">
                                     <div className="home-stat-wrapper">
                                         <div className="stat-icon">
@@ -306,15 +373,12 @@ const HotelProfilePage = (user: any) => {
                                      
                                       { currentHotel && currentHotel["business-photos"]?.map((photo:any) => {
                                           return (
-                                          
-                                
                                           <div className="profile-photo business-photo"> 
-                                          <div style={{float:"right" }} onClick={() => implementDelete(photo, '/business-photos/delete/')}>
+                                          <div style={{float:"right" }} onClick={() => implementUpdate(photo, '/business-photos/update/', {status:"deactivated"}, "deactivated" )}>
                                                     <i className="fa " style={{color:"red"}}> < AiOutlineClose /> </i>
                                            </div>
                                           <img src={photo.url_path} alt=" Nothing to show " />
-                                           
-                                           
+
                                           </div>)
                                         })
                                       }
@@ -411,13 +475,16 @@ const HotelProfilePage = (user: any) => {
                                     <div className="profile-header">
                                         <p>Users</p>
                                     <div className="profile-controls">
+                                    <a href="#" onClick={ () => setShowUsersModal(true)} ><i className="fa fa-edit"></i> Add</a>
                                     </div>
                                     </div>
                                    <hr></hr>
-                                   {currentHotel && currentHotel?.["user-business-access"]?.map( (adminUser : any) => {
-                                    return ( 
+                                   { currentHotel && currentHotel?.["user-business-access"]?.map( (adminUser : any) => {
+                                    if (adminUser.status === 'Active') {
+                                    return (
+                                    <div className={ adminUser.status.toLowerCase() }>
                                     <div className="profile-wrapper">
-                                        <div className="item-photo"> </div>
+                                        <div className="item-photo"> <BsPersonCheck className="photo-icon" color="#00522E"/> </div>
                                             <div className="item-datails">
                                                 <h6>{ adminUser.user} </h6>
                                                 <p>{adminUser.contact}</p>
@@ -425,9 +492,31 @@ const HotelProfilePage = (user: any) => {
                                                      return role.role;   
                                                 })}</p>
                                             </div>
-                                            <div className=" button_wrapper" > <button className="remove_button" > <p style={{ fontSize:"10px" }}> Suspend</p> <RiDeleteBin2Line/> </button> </div>
-                                        </div> )
-                                   })}
+                                            <span className="status"> { adminUser.status } </span>
+                                            <div className=" button_wrapper" > <button className="remove_button" > <p style={{ fontSize:"10px" }} onClick={ () => { implementUpdate( adminUser, '/user-business-access/update/', {status:"deactivated"}, "deactivated")}}> Suspend</p> <RiDeleteBin2Line/> </button> </div>
+                                        </div> 
+                                        </div>)
+                                    }
+                                    else return (
+                                    <div className={ adminUser.status }>
+                                    <div className="profile-wrapper inactive">
+                                        <div className="item-photo"> <MdOutlinePersonOff className="photo-icon" color="#932210"/> </div>
+                                            <div className="item-datails">
+                                                <h6>{ adminUser.user} </h6>
+                                                <p>{adminUser.contact}</p>
+                                                <p> { adminUser.roles.map((role:any) => {
+                                                     return role.role;   
+                                                })}</p>
+                                            </div>
+                                            <span className="inactive-status"> { adminUser.status } </span>
+                                            <div className=" button_wrapper" > <button className="add_button" > <p style={{ fontSize:"10px" }} onClick={ () => { implementUpdate( adminUser, '/user-business-access/update/', {status:"deactivated"}, "active")}}> Restore</p> <BsPersonCheck/> </button> </div>
+                                        </div> 
+                                        </div>
+
+                                    )
+                                   })
+                                
+                                }
                                    
                                 </Profile>
                                 <Profile>
@@ -471,8 +560,7 @@ const HotelProfilePage = (user: any) => {
                                                 <h6>{branch.branch_name}</h6>
                                                 <p>{branch.description}</p> 
                                              </div>
-                                             
-                                         
+                                                  <div className=" button_wrapper" > <button className="remove_button" onClick={ () => deleteRecord(branch, '/business-branch/delete/')} > <p style={{ fontSize:"10px" }}> Remove</p> <RiDeleteBin2Line/> </button> </div>
                                              </div>
                                          </>)
                                          } )
@@ -616,6 +704,16 @@ const Profile = styled.div`{
         hr{
             margin:5px 0px 15px 0px;
         }
+        .status {
+            color : green;
+            position : relative;
+            left : 30%;
+        }
+        .inactive-status {
+            color : #932210;
+            position : relative;
+            left : 30%;
+        }
         .field-wrapper{
             display:flex;
             align-items:center;
@@ -657,6 +755,7 @@ const Profile = styled.div`{
                 color: blue;
             }
         }
+        
         .profile-wrapper{
             display:flex;
             align-items:center;
@@ -664,6 +763,18 @@ const Profile = styled.div`{
                 background-color:#ccc;
                 height:80px;
                 width:80px;
+                border-radius: 160px
+            }
+
+
+            .photo-icon {
+            top : 30%;
+            left 30%;
+             height : 40px;
+             width : 40px;
+             align-self: center;
+             position : relative;
+
             }
              .item-datails{  
                 height:100px;
@@ -770,6 +881,26 @@ const Profile = styled.div`{
         background-color : #fff;
         color : #F50400;
       }
+
+      .add_button:hover{
+        margin-left : 10px;
+        outline:none;
+        margin-left:20px;
+        padding:3px 7px;
+        cursor : hand;
+        color : #4F0403;
+      }
+      .add_button {
+        margin-left : 10px;
+        border:none;
+        outline:none;
+        background-color : #fff;
+        color : #26695C;
+      }
+    .inactive{
+        color : #932210;
+
+    }
     `
 
 export default HotelProfilePage;

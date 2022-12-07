@@ -367,7 +367,7 @@ table thead.thead-light.green{
   }
 
   .deactivated {
-    opacity: 0.6;
+    opacity: 0.4;
   }
 
      `;

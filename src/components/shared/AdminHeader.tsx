@@ -4,6 +4,10 @@ import logo from "../../assets/images/logo.jpeg";
 import Avatar from 'react-avatar';
 import { getFromLocalStorage, removeItem } from "../../utils/local-storage";
 import { useNavigate } from "react-router-dom";
+import { BiUser } from 'react-icons/bi'
+import { GiRamProfile } from 'react-icons/gi'
+import { IoMdHelp } from 'react-icons/io'
+import { AiOutlineLogout } from 'react-icons/ai'
 
 
 const AdminHeader = (props: any) => {
@@ -49,18 +53,17 @@ const AdminHeader = (props: any) => {
                                 <i className="fa fa-question"></i>
                             </div>
                             <div className="user-profile">
-                                <Avatar color={'#188754'} round={true} name="Evans Wanyama" size="35" />
+                                <Avatar color={'#188754'} round={true} name={ user?.first_name}  size="35" />
                                 <div className="nameuser">
                                     
                                 </div> 
                                 <div className="userinfo">
-                                    <p><span className="user-name">{user?.first_name}&nbsp; {user?.last_name}</span></p>
-                                    <p><ul className="company">{user?.business_access.map((value:any) => <li>{value.business_name}</li>  )}</ul></p>
-                                    <p><a href="#">My Profile</a></p>
-                                    <p><a href="#">Help </a></p>
-                                    <p><a href="#">Change password</a></p>
+                                    <p> <BiUser color='#006c67'/> <span className="user-name">{user?.first_name}&nbsp; {user?.last_name}</span></p>
+                                    
+                                    <p> <GiRamProfile color='#006c67'/> <a href="#">My Profile</a></p>
+                                    <p> <IoMdHelp color='#006c67' /> <a href="#">Help </a></p>
                                     <hr/>
-                                    <p className="loguser" onClick= {Logout }>logout</p>
+                                    <p className="loguser" onClick= {Logout }> <AiOutlineLogout color='red'/> logout</p>
                                 </div>
                             </div> 
                         </div>
@@ -155,14 +158,14 @@ const HeaderWrapper = styled.div`
             }
         }
         .userinfo{
-            width:235px;
+            width:200px;
             background-color:#f1f1f1;
             z-index:1000;
             position:absolute;
             color:#000;
             top:45px;
             right:-1px;
-            font-size:.7rem;
+            font-size: 8px;
             display:none;
             transition:500ms;
             border:1px solid #ccc;
@@ -183,8 +186,9 @@ const HeaderWrapper = styled.div`
                 margin-top:-5px;
             }
             p{
-               font-size:16px;
-               padding:5px 0px;
+               font-size:12px;
+               padding:2px 0px;
+               font-weight : bold;
             }
        }
           .loguser,.userinfo p a {

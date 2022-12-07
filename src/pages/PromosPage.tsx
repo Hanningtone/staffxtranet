@@ -74,13 +74,14 @@ const PromosPage = (user: any) => {
     }, [state?.page])
 
     
-    const confirmBtnClass = (action) => {
+    const confirmBtnClass = (action : any) => {
         if (action === "activate"){
             return "btn btn-success";
         }
         return "btn btn-danger";
     }
-    const confirmText = (action) => {
+    
+    const confirmText = (action : any) => {
         if (action === "activate"){
             return "Your are about to activate this record. Proceed?";
         }
@@ -112,7 +113,7 @@ const PromosPage = (user: any) => {
               if (status !== 204) {
                 dispatch({type:"SET", key:"page", payload: state?.page === 1? 0 : 1});
               } else {
-                setError(result?.message || "Error, failed to delete record");
+                setError(result?.message || "Error, failed to update record");
               }
             }
           );
@@ -137,22 +138,21 @@ const PromosPage = (user: any) => {
         showModalForm(!showModal);
     }
 
-    const loadEditor = (promotion) => {
+    const loadEditor = (promotion : any) => {
         if (promotion.status === "active") {
             return <span style={{float:"left"}} onClick ={ () => setSelectedPromo(promotion)}><i className="fa fa-edit"></i></span>
         }else {return ""}
     }
 
-    const loadActivator = (promotion) => {
+    const loadActivator = (promotion : any) => {
         if (promotion.status === "active") {
             return <span style={{float:"right"}} onClick={() => implementDeactivate(promotion, '/promotions/update/', {status:"deactivated"}, "deactivate")}><i className="fa fa-ban" style={{color:"red"}}></i></span>
         }
 
         else 
         {
-        return <span style={{float:"right"}} onClick={() => implementDeactivate(promotion, '/promotions/update/', {status:"active"}, "activate")}><i className="fa fa-plus" style={{color:"#444",}}></i></span>}
+        return <span style={{float:"right"}} onClick={() => implementDeactivate(promotion, '/promotions/update/', {status:"active"}, "activate")}><i className="fa fa-plus" style={{color:"#444"}}></i></span>}
     }
-
 
 
     useEffect(() => {
